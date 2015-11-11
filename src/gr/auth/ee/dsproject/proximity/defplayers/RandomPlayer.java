@@ -5,9 +5,9 @@ import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class RandomPlayer implements AbstractPlayer {
-
 	final static int[][] addOnEven = { { 1, 0 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 } };
 	final static int[][] addOnOdd = { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 } };
+
 	static public int[][] getNeighborsCoordinates(Board board, int x, int y) {
 		int[][] neighbors = new int[6][2];
 		int[][] adder = (y % 2 == 0) ? addOnEven : addOnOdd;
@@ -24,12 +24,10 @@ public class RandomPlayer implements AbstractPlayer {
 		}
 		return neighbors;
 	}
+
 	int id;
-
 	String name;
-
 	int numOfTiles;
-
 	int score;
 
 	public RandomPlayer(Integer pid) {
@@ -82,6 +80,7 @@ public class RandomPlayer implements AbstractPlayer {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public void setNumOfTiles(int numOfTiles) {
 		this.numOfTiles = numOfTiles;
 	}
