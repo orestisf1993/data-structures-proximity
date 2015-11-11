@@ -205,3 +205,6 @@ sympy-plots-for-*.tex/
 # xindy
 *.xdy
 
+# Proximity project local files
+boardConfig.properties
+
