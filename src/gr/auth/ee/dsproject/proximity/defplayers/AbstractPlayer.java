@@ -2,24 +2,23 @@ package gr.auth.ee.dsproject.proximity.defplayers;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
 
-public interface AbstractPlayer
-{
-  public void setId (int id);
+public interface AbstractPlayer {
+	public int getId();
 
-  public int getId ();
+	public String getName();
 
-  public void setName (String name);
+	public int[] getNextMove(Board board);
 
-  public String getName ();
+	public int getNumOfTiles();
 
-  public void setScore (int score);
+	public int getScore();
 
-  public int getScore ();
-  
-  public int getNumOfTiles();
-  
-  public void setNumOfTiles(int tiles);
+	public void setId(int id);
 
-  public int[] getNextMove (Board board);
+	public void setName(String name);
+
+	public void setNumOfTiles(int tiles);
+
+	public void setScore(int score);
 
 }
