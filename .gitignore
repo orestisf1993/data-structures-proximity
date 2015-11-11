@@ -13,6 +13,8 @@ tmp/
 local.properties
 .settings/
 .loadpath
+.project
+.classpath
 
 # External tool builders
 .externalToolBuilders/
@@ -94,14 +96,15 @@ Session.vim
 *.fls
 *.out
 *.toc
+*.fmt
 
 ## Intermediate documents:
 *.dvi
 *-converted-to.*
 # these rules might exclude image files for figures etc.
-# *.ps
-# *.eps
-# *.pdf
+*.ps
+*.eps
+*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
@@ -207,4 +210,4 @@ sympy-plots-for-*.tex/
 
 # Proximity project local files
 boardConfig.properties
-
+*.txt
