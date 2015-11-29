@@ -211,3 +211,8 @@ sympy-plots-for-*.tex/
 # Proximity project local files
 boardConfig.properties
 *.txt
+
+# Javadoc
+*.html
+*.css
+*.js

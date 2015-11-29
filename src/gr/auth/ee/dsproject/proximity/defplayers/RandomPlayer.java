@@ -4,10 +4,35 @@ import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
+/**
+ * The RandomPlayer class implements a player for the game that randomly chooses
+ * the next tile.
+ * 
+ * @author orestis
+ * @author ioanna
+ *
+ */
 public class RandomPlayer implements AbstractPlayer {
+
+	// offsets of the neighboring tiles
+	/** The Constant addOnEven used for even y coordinates. */
 	final static int[][] addOnEven = { { 1, 0 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 } };
+
+	/** The Constant addOnOdd used for odd y coordinates. */
 	final static int[][] addOnOdd = { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 } };
 
+	/**
+	 * Returns a 2-D array with the coordinates of the 6 neighbors of the tile
+	 * at x,y.
+	 *
+	 * @param board
+	 *            the board
+	 * @param x
+	 *            the x coordinate
+	 * @param y
+	 *            the y coordinate
+	 * @return the neighbor's coordinates
+	 */
 	static public int[][] getNeighborsCoordinates(Board board, int x, int y) {
 		int[][] neighbors = new int[6][2];
 		int[][] adder = (y % 2 == 0) ? addOnEven : addOnOdd;
@@ -25,16 +50,41 @@ public class RandomPlayer implements AbstractPlayer {
 		return neighbors;
 	}
 
+	/** The id of the player. */
 	int id;
+
+	/** The name of the player. */
 	String name;
+
+	/** The number of tiles. */
 	int numOfTiles;
+
+	/** The current score. */
 	int score;
 
+	/**
+	 * Instantiates a new random player.
+	 *
+	 * @param pid
+	 *            the id of the player
+	 */
 	public RandomPlayer(Integer pid) {
 		super();
 		id = pid;
 	}
 
+	/**
+	 * Instantiates a new random player.
+	 *
+	 * @param pid
+	 *            the id of the player
+	 * @param pname
+	 *            the name of the player
+	 * @param pscore
+	 *            the score of the player
+	 * @param pnumOfTiles
+	 *            the number of tiles
+	 */
 	public RandomPlayer(Integer pid, String pname, int pscore, int pnumOfTiles) {
 		super();
 		id = pid;
@@ -43,14 +93,24 @@ public class RandomPlayer implements AbstractPlayer {
 		numOfTiles = pnumOfTiles;
 	}
 
+	/**
+	 * @return the id
+	 */
 	public int getId() {
 		return id;
 	}
 
+	/**
+	 * @return the name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @param board
+	 * @return x,y coordinates of the next move
+	 */
 	public int[] getNextMove(Board board) {
 		boolean tileIsNotEmpty;
 		int x, y;
@@ -65,26 +125,44 @@ public class RandomPlayer implements AbstractPlayer {
 		return nextMove;
 	}
 
+	/**
+	 * @return the number of tiles
+	 */
 	public int getNumOfTiles() {
 		return numOfTiles;
 	}
 
+	/**
+	 * @return the score
+	 */
 	public int getScore() {
 		return score;
 	}
 
+	/**
+	 * @param id
+	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
+	/**
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * @param numOfTiles
+	 */
 	public void setNumOfTiles(int numOfTiles) {
 		this.numOfTiles = numOfTiles;
 	}
 
+	/**
+	 * @param score
+	 */
 	public void setScore(int score) {
 		this.score = score;
 	}
