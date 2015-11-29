@@ -213,6 +213,4 @@ boardConfig.properties
 *.txt
 
 # Javadoc
-*.html
-*.css
-*.js
+javadoc/
