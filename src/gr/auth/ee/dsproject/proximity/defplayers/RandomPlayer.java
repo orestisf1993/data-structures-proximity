@@ -109,6 +109,7 @@ public class RandomPlayer implements AbstractPlayer {
 
 	/**
 	 * @param board
+	 *            The board of the game
 	 * @return x,y coordinates of the next move
 	 */
 	public int[] getNextMove(Board board) {
@@ -141,6 +142,7 @@ public class RandomPlayer implements AbstractPlayer {
 
 	/**
 	 * @param id
+	 *            the id
 	 */
 	public void setId(int id) {
 		this.id = id;
@@ -148,6 +150,7 @@ public class RandomPlayer implements AbstractPlayer {
 
 	/**
 	 * @param name
+	 *            the name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -155,6 +158,7 @@ public class RandomPlayer implements AbstractPlayer {
 
 	/**
 	 * @param numOfTiles
+	 *            the number of tiles
 	 */
 	public void setNumOfTiles(int numOfTiles) {
 		this.numOfTiles = numOfTiles;
@@ -162,6 +166,7 @@ public class RandomPlayer implements AbstractPlayer {
 
 	/**
 	 * @param score
+	 *            the score
 	 */
 	public void setScore(int score) {
 		this.score = score;
