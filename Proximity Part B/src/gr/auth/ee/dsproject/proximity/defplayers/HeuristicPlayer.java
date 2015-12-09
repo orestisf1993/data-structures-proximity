@@ -21,50 +21,23 @@ public class HeuristicPlayer implements AbstractPlayer {
             return -0.5;
         }
         final int opponentId = board.getTile(lastMove[0], lastMove[1]).getPlayerId();
-        final int myId = opponentId == 1 ? 2 : 1;
-        final int x = tile.getX();
-        final int y = tile.getY();
-        final Tile[] neighbors = ProximityUtilities.getNeighbors(x, y, board);
+        final int myId = (opponentId == 1) ? 2 : 1;
+        final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
 
-        int totalBlue = 0;
-        int totalRed = 0;
-        int k = 0;
-        int l = 0;
+        int scoreFromAlies = 0;
+        int scoreFromEnemies = 0;
 
-        double evaluation = 0.0;
         for (final Tile neighbor : neighbors) {
             if (neighbor == null) {
                 continue;
             }
-            if (neighbor.getPlayerId() == 1) {
-                if (randomNumber > neighbor.getScore()) {
-                    totalBlue += neighbor.getScore();
-                }
-                // posa idiou xrwmatos exoume,���� ������ ���� 1.sta 20ria den
-                // mporo na aykshsw
-                if (neighbor.getScore() != 20) {
-                    k++;
-                }
-            }
-            // athroizo to scre ton geitonikon poy exoun mikrotero score apo to
-            // diko m
-            else if (neighbor.getPlayerId() == 2) {
-                if (randomNumber > neighbor.getScore()) {
-                    totalRed += neighbor.getScore();
-                }
-                if (neighbor.getScore() != 20) {
-                    l++;
-                }
-            }
-
-            // � ��� ���� evaluation �����.�������� +1 ��� ���� ��� ���
-            if (myId == 1) {
-                evaluation = totalRed + k;
-            }
-            if (myId == 2) {
-                evaluation = totalBlue + l;
-            }
+            final int neighborPlayerId = neighbor.getPlayerId();
+            final int neighborScore = neighbor.getScore();
+            scoreFromEnemies += (neighborPlayerId == opponentId && randomNumber > neighborScore)
+                    ? neighborScore : 0;
+            scoreFromAlies += (neighborPlayerId == myId && neighborScore != 20) ? 1 : 0;
         }
+        double evaluation = scoreFromAlies + scoreFromEnemies;
         return evaluation;
     }
 
