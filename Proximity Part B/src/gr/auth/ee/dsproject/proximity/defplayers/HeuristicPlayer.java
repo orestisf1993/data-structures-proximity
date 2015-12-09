@@ -46,7 +46,7 @@ public class HeuristicPlayer implements AbstractPlayer {
     }
 
     public String getName() {
-        return "Random";
+        return "Heuristic";
     }
 
     public int[] getNextMove(final Board board, final int randomNumber) {
