@@ -8,20 +8,16 @@ public class HeuristicPlayer implements AbstractPlayer {
 
     int score;
     int id;
+    int opponentId;
     String name;
     int numOfTiles;
 
     public HeuristicPlayer(final Integer pid) {
         id = pid;
+        opponentId = (pid == 1) ? 2 : 1;
     }
 
     double getEvaluation(final Board board, final int randomNumber, final Tile tile) {
-        final int[] lastMove = board.getOpponentsLastMove();
-        if (lastMove[0] == -1 && lastMove[1] == -1) {
-            return -0.5;
-        }
-        final int opponentId = board.getTile(lastMove[0], lastMove[1]).getPlayerId();
-        final int myId = (opponentId == 1) ? 2 : 1;
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
 
         int scoreFromAlies = 0;
@@ -35,7 +31,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             final int neighborScore = neighbor.getScore();
             scoreFromEnemies += (neighborPlayerId == opponentId && randomNumber > neighborScore)
                     ? neighborScore : 0;
-            scoreFromAlies += (neighborPlayerId == myId && neighborScore != 20) ? 1 : 0;
+            scoreFromAlies += (neighborPlayerId == id && neighborScore != 20) ? 1 : 0;
         }
         double evaluation = scoreFromAlies + scoreFromEnemies;
         return evaluation;
