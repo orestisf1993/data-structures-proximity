@@ -214,3 +214,5 @@ boardConfig.properties
 
 # Javadoc
 javadoc/
+
+*SecondHeuristicPlayer.java
