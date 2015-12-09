@@ -32,26 +32,26 @@ public class HeuristicPlayer implements AbstractPlayer {
         int l = 0;
 
         double evaluation = 0.0;
-        for (int i = 0; i < neighbors.length; i++) {
-            if (neighbors[i] == null) {
+        for (final Tile neighbor : neighbors) {
+            if (neighbor == null) {
                 continue;
             }
-            if (neighbors[i].getPlayerId() == 1) {
-                if (randomNumber > neighbors[i].getScore()) {
-                    totalBlue = +neighbors[i].getScore();
+            if (neighbor.getPlayerId() == 1) {
+                if (randomNumber > neighbor.getScore()) {
+                    totalBlue = +neighbor.getScore();
                 }
                 // posa idiou xrwmatos exoume,���� ������ ���� 1.sta 20ria den
                 // mporo na aykshsw
-                if (neighbors[i].getScore() == 20) {
+                if (neighbor.getScore() == 20) {
                 } else {
                     k++;
                 }
             }
             // athroizo to scre ton geitonikon poy exoun mikrotero score apo to
             // diko m
-            else if (neighbors[i].getPlayerId() == 2) {
-                if (randomNumber > neighbors[i].getScore()) {
-                    totalRed = +neighbors[i].getScore();
+            else if (neighbor.getPlayerId() == 2) {
+                if (randomNumber > neighbor.getScore()) {
+                    totalRed = +neighbor.getScore();
                 }
                 if (randomNumber == 20) {
                 } else {
