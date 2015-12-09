@@ -42,8 +42,7 @@ public class HeuristicPlayer implements AbstractPlayer {
                 }
                 // posa idiou xrwmatos exoume,���� ������ ���� 1.sta 20ria den
                 // mporo na aykshsw
-                if (neighbor.getScore() == 20) {
-                } else {
+                if (neighbor.getScore() != 20) {
                     k++;
                 }
             }
@@ -51,10 +50,9 @@ public class HeuristicPlayer implements AbstractPlayer {
             // diko m
             else if (neighbor.getPlayerId() == 2) {
                 if (randomNumber > neighbor.getScore()) {
-                    totalRed = +neighbor.getScore();
+                    totalRed = neighbor.getScore();
                 }
-                if (randomNumber == 20) {
-                } else {
+                if (neighbor.getScore() != 20) {
                     l++;
                 }
             }
