@@ -38,7 +38,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             }
             if (neighbor.getPlayerId() == 1) {
                 if (randomNumber > neighbor.getScore()) {
-                    totalBlue = +neighbor.getScore();
+                    totalBlue += neighbor.getScore();
                 }
                 // posa idiou xrwmatos exoume,���� ������ ���� 1.sta 20ria den
                 // mporo na aykshsw
@@ -50,7 +50,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             // diko m
             else if (neighbor.getPlayerId() == 2) {
                 if (randomNumber > neighbor.getScore()) {
-                    totalRed = neighbor.getScore();
+                    totalRed += neighbor.getScore();
                 }
                 if (neighbor.getScore() != 20) {
                     l++;
