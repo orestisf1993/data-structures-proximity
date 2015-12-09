@@ -1,65 +1,139 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
+import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class HeuristicPlayer implements AbstractPlayer {
 
-	int score;
-	int id;
-	String name;
-	int numOfTiles;
+    int score;
+    int id;
+    String name;
+    int numOfTiles;
 
-	public HeuristicPlayer(Integer pid) {
-		id = pid;
-	}
+    public HeuristicPlayer(final Integer pid) {
+        id = pid;
+    }
 
-	public String getName() {
+    double getEvaluation(final Board board, final int randomNumber, final Tile tile) {
+        final int[] lastMove = board.getOpponentsLastMove();
+        if (lastMove[0] == -1 && lastMove[1] == -1) {
+            return -0.5;
+        }
+        final int opponentId = board.getTile(lastMove[0], lastMove[1]).getPlayerId();
+        final int myId = opponentId == 1 ? 2 : 1;
+        final int x = tile.getX();
+        final int y = tile.getY();
+        final Tile[] neighbors = ProximityUtilities.getNeighbors(x, y, board);
 
-		return "Random";
+        int totalBlue = 0;
+        int totalRed = 0;
+        int k = 0;
+        int l = 0;
 
-	}
+        double evaluation = 0.0;
+        for (int i = 0; i < neighbors.length; i++) {
+            if (neighbors[i] == null) {
+                continue;
+            }
+            if (neighbors[i].getPlayerId() == 1) {
+                if (randomNumber > neighbors[i].getScore()) {
+                    totalBlue = +neighbors[i].getScore();
+                }
+                // posa idiou xrwmatos exoume,���� ������ ���� 1.sta 20ria den
+                // mporo na aykshsw
+                if (neighbors[i].getScore() == 20) {
+                } else {
+                    k++;
+                }
+            }
+            // athroizo to scre ton geitonikon poy exoun mikrotero score apo to
+            // diko m
+            else if (neighbors[i].getPlayerId() == 2) {
+                if (randomNumber > neighbors[i].getScore()) {
+                    totalRed = +neighbors[i].getScore();
+                }
+                if (randomNumber == 20) {
+                } else {
+                    l++;
+                }
+            }
 
-	public int getNumOfTiles() {
-		return numOfTiles;
-	}
+            // � ��� ���� evaluation �����.�������� +1 ��� ���� ��� ���
+            if (myId == 1) {
+                evaluation = totalRed + k;
+            }
+            if (myId == 2) {
+                evaluation = totalBlue + l;
+            }
+        }
+        return evaluation;
+    }
 
-	public void setNumOfTiles(int tiles) {
-		numOfTiles = tiles;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public String getName() {
+        return "Random";
+    }
 
-	public void setScore(int score) {
-		this.score = score;
-	}
+    public int[] getNextMove(final Board board, final int randomNumber) {
+        double max = -1;
+        final int[] bestCoor = new int[2];
+        // HashMap<Integer[], Double> testHashMap = new HashMap<Integer[],
+        // Double>();
+        for (int i = 0; i < ProximityUtilities.NUMBER_OF_ROWS; i++) {
+            for (int j = 0; j < ProximityUtilities.NUMBER_OF_COLUMNS; j++) {
+                final Tile tile = board.getTile(j, i);
+                // Integer[] neigCoordinates = new Integer[2];
 
-	public int getScore() {
-		return score;
-	}
+                // exo kenh thesh
+                if (tile.getPlayerId() == 0) {
+                    // neigCoordinates[0] = tile.getX();
+                    // neigCoordinates[1] = tile.getY();
+                    final double evaluation = getEvaluation(board, randomNumber, tile);
+                    System.out.println("" + evaluation + " at " + tile.getX() + " " + tile.getY());
+                    if (evaluation >= max) {
+                        max = evaluation;
+                        bestCoor[0] = tile.getX();
+                        bestCoor[1] = tile.getY();
+                    }
+                    // testHashMap.put(neigCoordinates, evaluation);
+                }
+            }
 
-	public void setId(int id) {
-		// TODO Auto-generated method stub
-		this.id = id;
+        }
+        System.out.println(bestCoor[0] + " " + bestCoor[1] + "==" + max);
+        return bestCoor;
+    }
 
-	}
+    public int getNumOfTiles() {
+        return numOfTiles;
+    }
 
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-		this.name = name;
+    public int getScore() {
+        return score;
+    }
 
-	}
+    public void setId(final int id) {
+        // TODO Auto-generated method stub
+        this.id = id;
 
-	public int[] getNextMove(Board board, int randomNumber) {
-		// TODO fill this function
+    }
 
-	}
+    public void setName(final String name) {
+        // TODO Auto-generated method stub
+        this.name = name;
 
-	double getEvaluation(Board board, int randomNumber, Tile tile) {
-		board.
-		return 0.0;
-	}
+    }
+
+    public void setNumOfTiles(final int tiles) {
+        numOfTiles = tiles;
+    }
+
+    public void setScore(final int score) {
+        this.score = score;
+    }
 
 }
