@@ -1,6 +1,7 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
@@ -8,11 +9,21 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class HeuristicPlayer implements AbstractPlayer {
 
+    private static void printHashMap(HashMap<Integer, Integer> map) {
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            String key = entry.getKey().toString();
+            Integer value = entry.getValue();
+            System.out.println("key, " + key + " value " + value);
+        }
+    }
+
     int score;
     int id;
     int opponentId;
     String name;
+
     int numOfTiles;
+
     private HashMap<Integer, Integer> opponentsPool = new HashMap<Integer, Integer>();
 
     public HeuristicPlayer(final Integer pid) {
@@ -103,11 +114,11 @@ public class HeuristicPlayer implements AbstractPlayer {
     private void updateOpponentsPool(Board board) {
         int[] lastMove = board.getOpponentsLastMove();
         // decrease by 1.
+        // printHashMap(opponentsPool);
         Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
         assert (opponentId == lastMoveTile.getPlayerId());
         Integer key = lastMoveTile.getScore();
         Integer value = opponentsPool.get(key) - 1;
         opponentsPool.put(key, value);
     }
-
 }
