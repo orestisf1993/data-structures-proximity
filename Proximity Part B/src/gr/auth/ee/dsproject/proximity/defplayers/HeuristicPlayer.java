@@ -18,6 +18,9 @@ public class HeuristicPlayer implements AbstractPlayer {
     public HeuristicPlayer(final Integer pid) {
         id = pid;
         opponentId = (pid == 1) ? 2 : 1;
+        for (Integer key = 1; key <= 20; key++) {
+            opponentsPool.put(key, 3);
+        }
     }
 
     public double getEvaluation(final Board board, final int randomNumber, final Tile tile) {
@@ -99,19 +102,12 @@ public class HeuristicPlayer implements AbstractPlayer {
 
     private void updateOpponentsPool(Board board) {
         int[] lastMove = board.getOpponentsLastMove();
-        if (lastMove[0] == -1 && lastMove[1] == -1) {
-            // init opponentsPool
-            for (Integer key = 1; key <= 20; key++) {
-                opponentsPool.put(key, 3);
-            }
-        } else {
-            // decrease by 1.
-            Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
-            assert (opponentId == lastMoveTile.getPlayerId());
-            Integer key = lastMoveTile.getScore();
-            Integer value = opponentsPool.get(key) - 1;
-            opponentsPool.put(key, value);
-        }
+        // decrease by 1.
+        Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
+        assert (opponentId == lastMoveTile.getPlayerId());
+        Integer key = lastMoveTile.getScore();
+        Integer value = opponentsPool.get(key) - 1;
+        opponentsPool.put(key, value);
     }
 
 }
