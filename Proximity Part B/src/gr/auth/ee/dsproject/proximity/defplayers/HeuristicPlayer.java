@@ -113,11 +113,14 @@ public class HeuristicPlayer implements AbstractPlayer {
 
     private void updateOpponentsPool(Board board) {
         int[] lastMove = board.getOpponentsLastMove();
-        // decrease by 1.
+        if (lastMove[0] == -1) {
+            return;
+        }
         // printHashMap(opponentsPool);
         Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
         assert (opponentId == lastMoveTile.getPlayerId());
         Integer key = lastMoveTile.getScore();
+        // decrease by 1.
         Integer value = opponentsPool.get(key) - 1;
         opponentsPool.put(key, value);
     }
