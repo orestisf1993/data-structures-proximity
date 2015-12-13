@@ -47,32 +47,25 @@ public class HeuristicPlayer implements AbstractPlayer {
 
     public int[] getNextMove(final Board board, final int randomNumber) {
         double max = -1;
-        final int[] bestCoor = new int[2];
-        // HashMap<Integer[], Double> testHashMap = new HashMap<Integer[],
-        // Double>();
+        final int[] result = new int[3];
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_ROWS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_COLUMNS; j++) {
                 final Tile tile = board.getTile(j, i);
-                // Integer[] neigCoordinates = new Integer[2];
-
-                // exo kenh thesh
                 if (tile.getPlayerId() == 0) {
-                    // neigCoordinates[0] = tile.getX();
-                    // neigCoordinates[1] = tile.getY();
                     final double evaluation = getEvaluation(board, randomNumber, tile);
                     System.out.println("" + evaluation + " at " + tile.getX() + " " + tile.getY());
                     if (evaluation >= max) {
                         max = evaluation;
-                        bestCoor[0] = tile.getX();
-                        bestCoor[1] = tile.getY();
+                        result[0] = tile.getX();
+                        result[1] = tile.getY();
+
                     }
-                    // testHashMap.put(neigCoordinates, evaluation);
                 }
             }
-
         }
-        System.out.println(bestCoor[0] + " " + bestCoor[1] + "==" + max);
-        return bestCoor;
+        System.out.println(result[0] + " " + result[1] + "==" + max);
+        result[2] = randomNumber;
+        return result;
     }
 
     public int getNumOfTiles() {
