@@ -34,7 +34,7 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
     }
 
-    private double calculateRisk(Tile tile, Board board) {
+    private double calculateRisk(Tile tile, Board board, int nextTileScore) {
         Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         HashMap<Integer, Integer> map;
         if (opponentId == tile.getPlayerId()) {
@@ -66,7 +66,7 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
 
         double risk = (scoreTile * biggerValuesCount) / (emptyNeighbors * totalValuesCount);
-        if (tile.getPlayerId() == opponentId) {
+        if (tile.getPlayerId() == opponentId && nextTileScore <= scoreTile) {
             return -risk;
         } else {
             return risk;
@@ -77,7 +77,7 @@ public class HeuristicPlayer implements AbstractPlayer {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         int scoreFromAlies = 0;
         int scoreFromEnemies = 0;
-        double scoreFromRisk = calculateRisk(tile, board);
+        double scoreFromRisk = calculateRisk(tile, board, randomNumber);
 
         for (final Tile neighbor : neighbors) {
             if (neighbor == null || neighbor.getPlayerId() == 0) {
@@ -90,7 +90,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             } else if (neighborPlayerId == id && neighborScore != 20) {
                 scoreFromAlies++;
             }
-            scoreFromRisk += calculateRisk(neighbor, board);
+            scoreFromRisk += calculateRisk(neighbor, board, randomNumber);
         }
         double evaluation = scoreFromAlies + scoreFromEnemies + scoreFromRisk;
         return evaluation;
