@@ -11,7 +11,7 @@ public class HeuristicPlayer implements AbstractPlayer {
 
     private static void printHashMap(HashMap<Integer, Integer> map) {
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            String key = entry.getKey().toString();
+            Integer key = entry.getKey();
             Integer value = entry.getValue();
             System.out.println("key, " + key + " value " + value);
         }
@@ -21,10 +21,9 @@ public class HeuristicPlayer implements AbstractPlayer {
     int id;
     int opponentId;
     String name;
-
     int numOfTiles;
-
     private HashMap<Integer, Integer> opponentsPool = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> myPool;
 
     public HeuristicPlayer(final Integer pid) {
         id = pid;
@@ -38,18 +37,22 @@ public class HeuristicPlayer implements AbstractPlayer {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         int scoreFromAlies = 0;
         int scoreFromEnemies = 0;
+        double scoreFromRisk = calculateRisk(tile, board);
 
         for (final Tile neighbor : neighbors) {
-            if (neighbor == null) {
+            if (neighbor == null || neighbor.getPlayerId() == 0) {
                 continue;
             }
             final int neighborPlayerId = neighbor.getPlayerId();
             final int neighborScore = neighbor.getScore();
-            scoreFromEnemies += (neighborPlayerId == opponentId && randomNumber > neighborScore)
-                    ? neighborScore : 0;
-            scoreFromAlies += (neighborPlayerId == id && neighborScore != 20) ? 1 : 0;
+            if (neighborPlayerId == opponentId && randomNumber > neighborScore) {
+                scoreFromEnemies += neighborScore;
+            } else if (neighborPlayerId == id && neighborScore != 20) {
+                scoreFromAlies++;
+            }
+            scoreFromRisk += calculateRisk(neighbor, board);
         }
-        double evaluation = scoreFromAlies + scoreFromEnemies;
+        double evaluation = scoreFromAlies + scoreFromEnemies + scoreFromRisk;
         return evaluation;
     }
 
@@ -65,6 +68,7 @@ public class HeuristicPlayer implements AbstractPlayer {
         double max = -1;
         final int[] result = new int[3];
         updateOpponentsPool(board);
+        myPool = board.getMyPool();
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_ROWS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_COLUMNS; j++) {
                 final Tile tile = board.getTile(j, i);
