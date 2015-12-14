@@ -49,6 +49,9 @@ public class HeuristicPlayer implements AbstractPlayer {
                 emptyNeighbors++;
             }
         }
+        if (emptyNeighbors == 0) {
+            return 0;
+        }
 
         double totalValues = 0;
         double biggerValues = 0;
