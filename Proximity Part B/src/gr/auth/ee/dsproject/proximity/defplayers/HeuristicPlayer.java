@@ -9,6 +9,7 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class HeuristicPlayer implements AbstractPlayer {
 
+    @SuppressWarnings("unused")
     private static void printHashMap(HashMap<Integer, Integer> map) {
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             Integer key = entry.getKey();
@@ -53,24 +54,23 @@ public class HeuristicPlayer implements AbstractPlayer {
             return 0;
         }
 
-        double totalValues = 0;
-        double biggerValues = 0;
+        double totalValuesCount = 0;
+        double biggerValuesCount = 0;
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             Integer tileValue = entry.getKey();
             Integer tileCount = entry.getValue();
-            totalValues += tileCount;
+            totalValuesCount += tileCount;
             if (tileValue > scoreTile) {
-                biggerValues += tileCount;
+                biggerValuesCount += tileCount;
             }
         }
 
-        double risk = (scoreTile * biggerValues) / (emptyNeighbors * totalValues);
+        double risk = (scoreTile * biggerValuesCount) / (emptyNeighbors * totalValuesCount);
         if (tile.getPlayerId() == opponentId) {
             return -risk;
         } else {
             return risk;
         }
-
     }
 
     public double getEvaluation(final Board board, final int randomNumber, final Tile tile) {
@@ -114,16 +114,15 @@ public class HeuristicPlayer implements AbstractPlayer {
                 final Tile tile = board.getTile(j, i);
                 if (tile.getPlayerId() == 0) {
                     final double evaluation = getEvaluation(board, randomNumber, tile);
-                    System.out.println("" + evaluation + " at " + tile.getX() + " " + tile.getY());
                     if (evaluation >= max) {
                         max = evaluation;
                         result[0] = tile.getX();
                         result[1] = tile.getY();
-
                     }
                 }
             }
         }
+
         System.out.println(result[0] + " " + result[1] + "==" + max);
         result[2] = randomNumber;
         return result;
