@@ -33,6 +33,41 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
     }
 
+    double calculateRisk(Tile tile, Board board) {
+        Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
+        HashMap<Integer, Integer> map;
+        if (opponentId == tile.getPlayerId()) {
+            map = opponentsPool;
+        } else {
+            map = myPool;
+        }
+
+        double emptyNeighbors = 0;
+        double scoreTile = tile.getScore();
+        for (Tile neighbor : neighbors) {
+            if (neighbor != null && neighbor.getPlayerId() == 0)
+                emptyNeighbors++;
+        }
+
+        double totalValues = 0;
+        double biggerValues = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            Integer key = entry.getKey();
+            Integer value = entry.getValue();
+            totalValues += value;
+            if (value > scoreTile) {
+                biggerValues += value;
+            }
+        }
+
+        double risk = (scoreTile * biggerValues) / (emptyNeighbors * totalValues);
+        if (tile.getPlayerId() == opponentId)
+            return -risk;
+        else
+            return risk;
+
+    }
+
     public double getEvaluation(final Board board, final int randomNumber, final Tile tile) {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         int scoreFromAlies = 0;
@@ -122,7 +157,7 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
         // printHashMap(opponentsPool);
         Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
-        assert (opponentId == lastMoveTile.getPlayerId());
+        assert(opponentId == lastMoveTile.getPlayerId());
         Integer key = lastMoveTile.getScore();
         // decrease by 1.
         Integer value = opponentsPool.get(key) - 1;
