@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 from subprocess import call
-import glob
 import re
 from argparse import ArgumentParser
 import sys
@@ -29,7 +28,7 @@ MAIN_PATH = r'gr.auth.ee.dsproject.proximity.board.MainPlatform'
 MESSAGE_FORMAT='''Running for: {n_iters} iterations
 using players: {players}
 at: {target_dir}
-with jar: {jar_lib}
+with jar: {jar_path}
 with bin: {bin_path}
 '''
 
@@ -43,15 +42,13 @@ def main():
     parser.add_argument("-p", "--players", action="store", dest="players", default="Heuristic-Heuristic")
     parser.add_argument("-n", "--number-of-iterations", action="store", dest="n_iters", default=20, type=int)
     parser.add_argument("-d", "--dir", action="store", dest="target_dir", default=os.getcwd())
-    parser.add_argument("-j", "--jar", action="store", dest="jar_lib", default="lib")
+    parser.add_argument("-j", "--jar", action="store", dest="jar_path", default="lib/proximity.jar")
     parser.add_argument("-b", "--bin", action="store", dest="bin_path", default="bin")
     parser.add_argument("-q", "--quiet", action="store_false", dest="verbose", default=False)
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose")
     options = parser.parse_args()
 
-    jar_paths_pattern = os.path.join(options.target_dir, options.jar_lib, '**', '*.jar')
-    jar_paths = glob.iglob(jar_paths_pattern, recursive=True)
-    java_paths = list(jar_paths) + [options.bin_path]
+    java_paths = [options.jar_path, options.bin_path]
     path_seperator = '"' + os.path.pathsep + '"'
     java_paths_str = path_seperator.join(java_paths)
     cmd = CMD_FORMAT.format(java_paths_str=java_paths_str, main_path=MAIN_PATH)
