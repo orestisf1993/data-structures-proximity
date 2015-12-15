@@ -1,4 +1,7 @@
 %&preamble
+\usepackage{natbib}
+\bibliographystyle{abbrv}
+
 % Save static part as preamble.tex and use command:
 % xelatex -ini -shell-escape -job-name="preamble" "&xelatex preamble.tex\dump"
 % to produce preamble.fmt
@@ -39,5 +42,7 @@
 
 \include{intro}
 \include{code-explanation}
+
+\bibliography{bibl}
 
 \end{document}
