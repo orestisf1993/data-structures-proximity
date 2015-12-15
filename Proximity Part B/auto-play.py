@@ -42,7 +42,7 @@ def main():
     parser.add_argument("-p", "--players", action="store", dest="players", default="Heuristic-Heuristic")
     parser.add_argument("-n", "--number-of-iterations", action="store", dest="n_iters", default=20, type=int)
     parser.add_argument("-d", "--dir", action="store", dest="target_dir", default=os.getcwd())
-    parser.add_argument("-j", "--jar", action="store", dest="jar_path", default="lib/proximity.jar")
+    parser.add_argument("-j", "--jar", action="store", dest="jar_path", default=os.path.join("lib","proximity.jar"))
     parser.add_argument("-b", "--bin", action="store", dest="bin_path", default="bin")
     parser.add_argument("-q", "--quiet", action="store_false", dest="verbose", default=False)
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose")
