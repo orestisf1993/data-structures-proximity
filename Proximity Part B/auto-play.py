@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 from subprocess import call
-from glob import glob
+import glob
 import re
 from argparse import ArgumentParser
 import sys
@@ -43,14 +43,15 @@ def main():
     parser.add_argument("-p", "--players", action="store", dest="players", default="Heuristic-Heuristic")
     parser.add_argument("-n", "--number-of-iterations", action="store", dest="n_iters", default=20, type=int)
     parser.add_argument("-d", "--dir", action="store", dest="target_dir", default=os.getcwd())
-    parser.add_argument("-j", "--jar", action="store", dest="jar_lib", default="runnable_lib")
+    parser.add_argument("-j", "--jar", action="store", dest="jar_lib", default="lib")
     parser.add_argument("-b", "--bin", action="store", dest="bin_path", default="bin")
     parser.add_argument("-q", "--quiet", action="store_false", dest="verbose", default=False)
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose")
     options = parser.parse_args()
 
-    jar_lib = os.path.join(options.target_dir, options.jar_lib, '*')
-    java_paths = glob(jar_lib) + [os.path.join(options.target_dir, options.bin_path)]
+    jar_paths_pattern = os.path.join(options.target_dir, options.jar_lib, '**', '*.jar')
+    jar_paths = glob.iglob(jar_paths_pattern, recursive=True)
+    java_paths = list(jar_paths) + [options.bin_path]
     path_seperator = '"' + os.path.pathsep + '"'
     java_paths_str = path_seperator.join(java_paths)
     cmd = CMD_FORMAT.format(java_paths_str=java_paths_str, main_path=MAIN_PATH)
