@@ -3,8 +3,8 @@ import os
 from subprocess import call
 from glob import glob
 import re
-RESULTS_FILE = r'Heuristic-old.txt'
-CMD_FORMAT = r"java -cp '{java_paths_str}' {main_path}"
+RESULTS_FILE = r'Heuristic-Heuristic.txt'
+CMD_FORMAT = r'java -cp "{java_paths_str}" {main_path}'
 MAIN_PATH = r"gr.auth.ee.dsproject.proximity.board.MainPlatform"
 NUMBER_OF_ITERATIONS = 50
 
@@ -21,7 +21,7 @@ def main():
     cur_dir = os.getcwd()
     runnable_lib = os.path.join(cur_dir, 'runnable_lib', '*')
     java_paths = glob(runnable_lib) + [os.path.join(cur_dir, 'bin')]
-    java_paths_str = ':'.join(java_paths)
+    java_paths_str = os.path.pathsep.join(java_paths)
     cmd = CMD_FORMAT.format(java_paths_str=java_paths_str, main_path=MAIN_PATH)
     print(cmd)
 
