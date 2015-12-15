@@ -51,7 +51,8 @@ def main():
 
     jar_lib = os.path.join(options.target_dir, options.jar_lib, '*')
     java_paths = glob(jar_lib) + [os.path.join(options.target_dir, options.bin_path)]
-    java_paths_str = os.path.pathsep.join(java_paths)
+    path_seperator = '"' + os.path.pathsep + '"'
+    java_paths_str = path_seperator.join(java_paths)
     cmd = CMD_FORMAT.format(java_paths_str=java_paths_str, main_path=MAIN_PATH)
     if not options.verbose:
         cmd += ' > ' + os.devnull
