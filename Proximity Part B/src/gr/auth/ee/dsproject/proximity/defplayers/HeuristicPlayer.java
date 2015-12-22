@@ -29,6 +29,7 @@ public class HeuristicPlayer implements AbstractPlayer {
     public HeuristicPlayer(final Integer pid) {
         id = pid;
         opponentId = (pid == 1) ? 2 : 1;
+        name = "HeuristicPlayerTeam2";
         for (Integer key = 1; key <= 20; key++) {
             opponentsPool.put(key, 3);
         }
@@ -101,7 +102,7 @@ public class HeuristicPlayer implements AbstractPlayer {
     }
 
     public String getName() {
-        return "Heuristic";
+        return name;
     }
 
     public int[] getNextMove(final Board board, final int randomNumber) {
@@ -123,7 +124,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             }
         }
 
-        System.out.println(result[0] + " " + result[1] + "==" + max);
+        // System.out.println(result[0] + " " + result[1] + "==" + max);
         result[2] = randomNumber;
         return result;
     }
