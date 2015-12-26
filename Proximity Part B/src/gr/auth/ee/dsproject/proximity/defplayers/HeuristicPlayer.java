@@ -10,10 +10,10 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 public class HeuristicPlayer implements AbstractPlayer {
 
     @SuppressWarnings("unused")
-    private static void printHashMap(HashMap<Integer, Integer> map) {
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            Integer key = entry.getKey();
-            Integer value = entry.getValue();
+    private static void printHashMap(final HashMap<Integer, Integer> map) {
+        for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            final Integer key = entry.getKey();
+            final Integer value = entry.getValue();
             System.out.println("key, " + key + " value " + value);
         }
     }
@@ -23,7 +23,7 @@ public class HeuristicPlayer implements AbstractPlayer {
     int opponentId;
     String name;
     int numOfTiles;
-    private HashMap<Integer, Integer> opponentsPool = new HashMap<Integer, Integer>();
+    private final HashMap<Integer, Integer> opponentsPool = new HashMap<Integer, Integer>();
     private HashMap<Integer, Integer> myPool;
 
     public HeuristicPlayer(final Integer pid) {
@@ -35,8 +35,8 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
     }
 
-    private double calculateRisk(Tile tile, Board board, int nextTileScore) {
-        Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
+    private double calculateRisk(final Tile tile, final Board board, final int nextTileScore) {
+        final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         HashMap<Integer, Integer> map;
         if (opponentId == tile.getPlayerId()) {
             map = opponentsPool;
@@ -45,8 +45,8 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
 
         double emptyNeighbors = 0;
-        double scoreTile = tile.getScore();
-        for (Tile neighbor : neighbors) {
+        final double scoreTile = tile.getScore();
+        for (final Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() == 0) {
                 emptyNeighbors++;
             }
@@ -57,16 +57,16 @@ public class HeuristicPlayer implements AbstractPlayer {
 
         double totalValuesCount = 0;
         double biggerValuesCount = 0;
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            Integer tileValue = entry.getKey();
-            Integer tileCount = entry.getValue();
+        for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            final Integer tileValue = entry.getKey();
+            final Integer tileCount = entry.getValue();
             totalValuesCount += tileCount;
             if (tileValue > scoreTile) {
                 biggerValuesCount += tileCount;
             }
         }
 
-        double risk = (scoreTile * biggerValuesCount) / (emptyNeighbors * totalValuesCount);
+        final double risk = (scoreTile * biggerValuesCount) / (emptyNeighbors * totalValuesCount);
         if (tile.getPlayerId() == opponentId && nextTileScore <= scoreTile) {
             return -risk;
         } else {
@@ -93,7 +93,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             }
             scoreFromRisk += calculateRisk(neighbor, board, randomNumber);
         }
-        double evaluation = scoreFromAlies + scoreFromEnemies + scoreFromRisk;
+        final double evaluation = scoreFromAlies + scoreFromEnemies + scoreFromRisk;
         return evaluation;
     }
 
@@ -155,17 +155,17 @@ public class HeuristicPlayer implements AbstractPlayer {
         this.score = score;
     }
 
-    private void updateOpponentsPool(Board board) {
-        int[] lastMove = board.getOpponentsLastMove();
+    private void updateOpponentsPool(final Board board) {
+        final int[] lastMove = board.getOpponentsLastMove();
         if (lastMove[0] == -1) {
             return;
         }
         // printHashMap(opponentsPool);
-        Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
+        final Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
         assert (opponentId == lastMoveTile.getPlayerId());
-        Integer key = lastMoveTile.getScore();
+        final Integer key = lastMoveTile.getScore();
         // decrease by 1.
-        Integer value = opponentsPool.get(key) - 1;
+        final Integer value = opponentsPool.get(key) - 1;
         opponentsPool.put(key, value);
     }
 }
