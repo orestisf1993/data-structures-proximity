@@ -1,10 +1,9 @@
 \chapter{Υλοποίηση Του Αλγορίθμου}
-\section{Συνοπτική Περιγραφή Αλγορίθμου}
 \begin{sloppypar}
 Ο αλγόριθμος αποτελείται από την κλάση \lstinline!HeuristicPlayer! στην οποία υλοποιούνται οι  
 συναρτήσεις  \lstinline!getNextMove()!,
 \lstinline!getEvaluation()! (οι οποίες ζητούνται από την εκφώνηση) και η 
-\lstinline!calculateRisk()! (μία δίκη μας συνάρτηση, βοηθητική στην \lstinline!getEvaluation(!)).
+\lstinline!calculateRisk()! (μία δίκη μας συνάρτηση, βοηθητική στην \lstinline!getEvaluation()!).
 Με τις συναρτήσεις αυτές, αρχικά, αξιολογούμε την θέση.
 Αυτό γίνεται με την \lstinline!calculateRisk()! και την 
 \lstinline!getEvaluation()!.
@@ -20,3 +19,56 @@
 Τέλος, να σημειωθεί ότι δημιουργήσαμε, μία ακόμη επιπλέον, συνάρτηση την \lstinline!updateOpponentsPool()! για να 
 παρακολουθούμε τις διαθέσιμες κινήσεις του αντιπάλου.
 \end{sloppypar}
+
+\section{\lstinline[basicstyle=\ttfamily]!getNextMove()!}
+Η συνάρτηση αυτή δέχεται ως ορίσματα ένα αντικείμενο τύπου \lstinline!Board! και 
+την μεταβλητή \lstinline!randomNumber! και επιστρέφει έναν 
+μονοδιάστατο πίνακα(\lstinline!result[3]!) με τις συντεταγμένες \lstinline!x,y! 
+που αντιστοιχούν στην θέση με την καλύτερη αξιολόγηση καθώς και τον 
+\lstinline!randomNumber!.
+
+Η δομή της συνάρτησης είναι η εξής:\begin{itemize}
+\item Καλούμε τη συνάρτηση\lstinline! updateOpponentPool()! την 
+οποία αναλύουμε στο \hyperref[sec:updateOpponentsPool]{\ref{sec:updateOpponentsPool}}
+
+\item Καλούμε τη συνάρτηση \lstinline!getMyPool()! η οποία επιστρέφει ένα αντικείμενο τύπου \lstinline!HashMap! που αναπαριστά το σύνολο των διαθέσιμων τιμών που είναι πιθανό να έρθουν για την επόμενη κίνηση
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+myPool = board.getMyPool();
+\end{lstlisting}
+
+\item Αρχή μιας λούπας που προσπελάζει κάθε διαφορετικό πλακίδιο στο ταμπλό
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+for (int i = 0; i < ProximityUtilities.NUMBER_OF_ROWS; i++) {
+    for (int j = 0; j < ProximityUtilities.NUMBER_OF_COLUMNS; j++) {
+\end{lstlisting}
+\item Σε κάθε επανάληψη της καλούμε την συνάρτηση \lstinline!board.getTile()! που επιστρέφει ένα αντικείμενο τύπου \lstinline!Tile!. Αυτό είναι το πλακίδιο στη θέση \lstinline!j,i!.
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+final Tile tile = board.getTile(j, i);
+\end{lstlisting}
+\item Αν η θέση είναι κενή (άρα μπορούμε να τοποθετήσουμε το νέο μας πλακίδιο εκεί),
+τότε καλούμε την \lstinline!getEvaluation()! και αποθηκεύουμε την επιστρεφόμενη τιμή 
+στην μεταβλητή \lstinline!evaluation!.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+if (tile.getPlayerId() == 0) {
+    final double evaluation = getEvaluation(board, randomNumber, tile);
+\end{lstlisting}
+\item Αν η \lstinline!evaluation! είναι μεγαλύτερη της 
+\lstinline!max! (μία μεταβλητή την οποία έχουμε αρχικοποιήσει αρχικά στη τιμή \lstinline!Double.NEGATIVE_INFINITY!) αποθηκεύουμε 
+τις συντεταγμένες του πλακιδίου στον πίνακα \lstinline!result!.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+if (evaluation >= max) {
+	max = evaluation;
+	result[0] = tile.getX();
+	result[1] = tile.getY();
+}
+\end{lstlisting}
+\item Όταν τελειώσει η \lstinline!for! θα έχουμε αποθηκευμένο στη \lstinline!max! το μεγαλύτερο \lstinline!evaluation! και στον πίνακα \lstinline!result! τις 
+αντίστοιχες συντεταγμένες του πλακιδίου με το μεγαλύτερο \lstinline!evaluation!.
+Τοποθετούμε στη τρίτη θέση του πίνακα result το \lstinline!randomNumber!.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+result[2] = randomNumber;
+\end{lstlisting}
+\item Επιστρέφουμε τον πίνακα \lstinline!result!.
+\end{itemize}
+
+\section{\lstinline[basicstyle=\ttfamily]!updateOpponentsPool()!} \label{sec:updateOpponentsPool}
