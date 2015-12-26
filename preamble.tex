@@ -1,19 +1,15 @@
+\RequirePackage[l2tabu, orthodox]{nag}
 % Specify the type of document
-\documentclass{report}
+\documentclass[a4paper]{report}
 %\documentclass[draft]{report}
 
 % packages
 
 % https://foss.ntua.gr/wiki/index.php/%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%B1_%CF%83%CF%84%CE%BF_TeX/LaTeX_%CE%BC%CE%B5_%CF%84%CE%BF_XeTeX#.CE.97yphenation
-% greek hyphenation package
-\usepackage{xgreek}
 % title in pic:
 \usepackage{titlepic}
 \usepackage[textwidth=15cm]{geometry}
 \usepackage{subfig}
-
-% https://www.ctan.org/pkg/inputenc
-\usepackage[utf8]{inputenc}
 
 % Select alternative section titles
 % https://www.ctan.org/pkg/titlesec
@@ -32,7 +28,6 @@
 \usepackage{caption}
 % http://tex.stackexchange.com/questions/118713/is-microtype-fully-supported-now-by-xelatex-if-not-how-can-i-keep-myself-up-to
 % http://tug.org/pipermail/xetex/2013-April/024263.html
-\usepackage{microtype}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{fancyref}
@@ -44,7 +39,7 @@
 %  {\par\medskip\noindent\minipage{\linewidth}}
 %  {\endminipage\par\medskip}
 
-\titleformat{\chapter}[hang]{\bf\huge}{\thechapter}{2pc}{}
+\titleformat{\chapter}[hang]{\bfseries\huge}{\thechapter}{2pc}{}
 % plain, headings or empty. Headins prints the current chapter heading + page number
 %\pagestyle{headings}
 % fancier headings with these package
@@ -87,9 +82,7 @@
 %\pgfplotsset{plot coordinates/math parser=false}
 %\newlength\figureheight
 %\newlength\figurewidth
-
-\usepackage[table]{xcolor}% http://ctan.org/pkg/xcolor
-
+\renewcommand*{\ttdefault}{Hack}
 % for code with higlighting
 \usepackage{listings}
 \usepackage{color}
@@ -98,9 +91,9 @@
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \lstset{ %
   backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
-  basicstyle=\normalsize\ttfamily,        % the size of the fonts that are used for the code
+  basicstyle=\normalsize\ttfamily, % the size of the fonts that are used for the code
   breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
-  breaklines=false,                 % sets automatic line breaking
+  breaklines=false,                % sets automatic line breaking
   captionpos=b,                    % sets the caption-position to bottom
   commentstyle=\color{mygreen},    % comment style
   escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
@@ -108,7 +101,7 @@
   frame=single,                    % adds a frame around the code
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
-  language=Java,                 % the language of the code
+  language=Java,                   % the language of the code
   numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
   numbersep=5pt,                   % how far the line-numbers are from the code
   numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
@@ -123,9 +116,6 @@
 }
 \lstdefinestyle{Bash}
 {language=bash,
-keywordstyle=\color{blue},
-basicstyle=\ttfamily,
-breaklines=true,
 alsoletter={:~$},
 morekeywords=[2]{peter@kbpet:},
 keywordstyle=[2]{\color{red}},
@@ -133,4 +123,13 @@ literate={\$}{{\textcolor{red}{\$}}}1
          {:}{{\textcolor{red}{:}}}1
          {~}{{\textcolor{red}{\textasciitilde}}}1,
 }
-%\endofdump
+\usepackage{multirow}
+\usepackage{placeins}
+\usepackage{etoolbox}
+\usepackage{booktabs}
+% no newpage at chapter
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
+\setcounter{tocdepth}{3} % subsub has numbers
+\setcounter{secnumdepth}{3} % subsub in toc
