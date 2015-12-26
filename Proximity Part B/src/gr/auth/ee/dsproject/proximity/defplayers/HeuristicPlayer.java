@@ -106,7 +106,7 @@ public class HeuristicPlayer implements AbstractPlayer {
     }
 
     public int[] getNextMove(final Board board, final int randomNumber) {
-        double max = -1;
+        double max = Double.NEGATIVE_INFINITY;
         final int[] result = new int[3];
         updateOpponentsPool(board);
         myPool = board.getMyPool();
