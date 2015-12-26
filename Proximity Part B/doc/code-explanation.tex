@@ -44,10 +44,12 @@ myPool = board.getMyPool();
 for (int i = 0; i < ProximityUtilities.NUMBER_OF_ROWS; i++) {
     for (int j = 0; j < ProximityUtilities.NUMBER_OF_COLUMNS; j++) {
 \end{lstlisting}
+
 \item Σε κάθε επανάληψη της καλούμε την συνάρτηση \lstinline!board.getTile()! που επιστρέφει ένα αντικείμενο τύπου \lstinline!Tile!. Αυτό είναι το πλακίδιο στη θέση \lstinline!j,i!.
 \begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
 final Tile tile = board.getTile(j, i);
 \end{lstlisting}
+
 \item Αν η θέση είναι κενή (άρα μπορούμε να τοποθετήσουμε το νέο μας πλακίδιο εκεί),
 τότε καλούμε την \lstinline!getEvaluation()! και αποθηκεύουμε την επιστρεφόμενη τιμή 
 στην μεταβλητή \lstinline!evaluation!.
@@ -55,6 +57,7 @@ final Tile tile = board.getTile(j, i);
 if (tile.getPlayerId() == 0) {
     final double evaluation = getEvaluation(board, randomNumber, tile);
 \end{lstlisting}
+
 \item Αν η \lstinline!evaluation! είναι μεγαλύτερη της 
 \lstinline!max! (μία μεταβλητή την οποία έχουμε αρχικοποιήσει αρχικά στη τιμή \lstinline!Double.NEGATIVE_INFINITY!) αποθηκεύουμε 
 τις συντεταγμένες του πλακιδίου στον πίνακα \lstinline!result!.
@@ -65,12 +68,15 @@ if (evaluation >= max) {
 	result[1] = tile.getY();
 }
 \end{lstlisting}
+
 \item Όταν τελειώσει η \lstinline!for! θα έχουμε αποθηκευμένο στη \lstinline!max! το μεγαλύτερο \lstinline!evaluation! και στον πίνακα \lstinline!result! τις 
 αντίστοιχες συντεταγμένες του πλακιδίου με το μεγαλύτερο \lstinline!evaluation!.
-Τοποθετούμε στη τρίτη θέση του πίνακα result το \lstinline!randomNumber!.
+
+\item Τοποθετούμε στη τρίτη θέση του πίνακα result το \lstinline!randomNumber!.
 \begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
 result[2] = randomNumber;
 \end{lstlisting}
+
 \item Επιστρέφουμε τον πίνακα \lstinline!result!.
 \end{itemize}
 
