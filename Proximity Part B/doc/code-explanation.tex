@@ -20,7 +20,7 @@
 παρακολουθούμε τις διαθέσιμες κινήσεις του αντιπάλου.
 \end{sloppypar}
 
-\section{Συνάρτηση \lstinline[basicstyle=\ttfamily]!getNextMove()!}
+\section{Συνάρτηση \texttt{calculateRisk()}}
 \begin{lstlisting}[numbers=none, title={Declaration της συνάρτησης}]
 public int[] getNextMove(final Board board, final int randomNumber)
 \end{lstlisting}
@@ -80,4 +80,50 @@ result[2] = randomNumber;
 \item Επιστρέφουμε τον πίνακα \lstinline!result!.
 \end{itemize}
 
-\section{\lstinline[basicstyle=\ttfamily]!updateOpponentsPool()!} \label{sec:updateOpponentsPool}
+\section{Συνάρτηση \texttt{updateOpponentsPool()}} \label{sec:updateOpponentsPool}
+\begin{lstlisting}[numbers=none, title={Declaration της συνάρτησης}]
+private void updateOpponentsPool(final Board board)
+\end{lstlisting}
+Η συνάρτηση αυτή δέχεται ως όρισμα ένα αντικείμενο τύπου \lstinline!Board!,
+δεν επιστρέφει τίποτα και
+ενημερώνει την \lstinline!self.opponentsPool! με τις εναπομείναντες κινήσεις του αντίπαλου παίκτη.
+\begin{lstlisting}[numbers=none, breaklines=true, title={Declaration της \lstinline!opponentsPool!}]
+private final HashMap<Integer, Integer> opponentsPool = new HashMap<Integer, Integer>();
+\end{lstlisting}
+
+Η δομή της συνάρτησης είναι η εξής:
+\begin{itemize}
+\item Παίρνουμε την τελευταία κίνηση του αντιπάλου.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+final int[] lastMove = board.getOpponentsLastMove();
+\end{lstlisting}
+
+\item Αν το αποτέλεσμα περιέχει \lstinline!-1! τότε σημαίνει ότι ο αντίπαλος δεν έχει παίξει ακόμα οπότε η συνάρτηση επιστρέφει
+
+\item Παίρνουμε το \lstinline!Tile! που αντιστοιχεί στην τελευταία κίνηση.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+final Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
+\end{lstlisting}
+
+\item Χρησιμοποιούμε ως \lstinline!key! στο \lstinline!HashMap! μας το score του αντίπαλου πλακιδίου.
+Θεωρούμε ότι, σύμφωνα με τους κανόνες, το \lstinline!Tile! στην θέση που έπαιξε τον προηγούμενο γύρο ο αντίπαλος έχει το ίδιο score με το πλακίδιο που του κληρώθηκε στην προηγούμενη κίνηση.
+Έτσι, αφαιρούμε τα εναπομείναντα πλακίδια αυτού του score κατά \lstinline!1!
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+final Integer key = lastMoveTile.getScore();
+// decrease by 1.
+final Integer value = opponentsPool.get(key) - 1;
+opponentsPool.put(key, value);
+\end{lstlisting}
+
+\item Ανανεώνουμε το \lstinline!opponentsPool! και η συνάρτηση επιστρέφει.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+opponentsPool.put(key, value);
+\end{lstlisting}
+\end{itemize}
+
+Σημειώνεται ότι το \lstinline!opponentsPool! αρχικοποιείται με \lstinline!3! κινήσεις για κάθε score πλακιδίου στον constructor.
+\begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+for (Integer key = 1; key <= 20; key++) {
+    opponentsPool.put(key, 3);
+}
+\end{lstlisting}
