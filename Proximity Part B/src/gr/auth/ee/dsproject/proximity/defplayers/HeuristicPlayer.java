@@ -69,8 +69,8 @@ public class HeuristicPlayer implements AbstractPlayer {
             return 0;
         }
 
-        final double risk = 2 * (scoreTile * biggerValuesCount)
-                / (emptyNeighbors * emptyNeighbors * totalValuesCount);
+        final double percentLarger = biggerValuesCount / totalValuesCount;
+        final double risk = 2 * percentLarger * (scoreTile) / (emptyNeighbors * emptyNeighbors);
         if (isEnemyBigger) {
             return -risk;
         } else {
