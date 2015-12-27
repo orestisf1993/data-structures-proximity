@@ -36,7 +36,6 @@ public class HeuristicPlayer implements AbstractPlayer {
     }
 
     private double calculateRisk(final Tile tile, final Board board, final int nextTileScore) {
-        final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         HashMap<Integer, Integer> map;
         final int tileId = tile.getPlayerId();
         final double scoreTile = tile.getScore();
@@ -47,6 +46,7 @@ public class HeuristicPlayer implements AbstractPlayer {
             map = opponentsPool;
         }
 
+        final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         double emptyNeighbors = (tileId == 0) ? 1 : 0;
         for (final Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() == 0) {
