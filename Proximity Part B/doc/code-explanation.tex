@@ -1,26 +1,26 @@
 \chapter{Υλοποίηση Του Αλγορίθμου}
 \begin{sloppypar}
-Ο αλγόριθμος αποτελείται από την κλάση \lstinline!HeuristicPlayer! στην οποία υλοποιούνται οι  
+Ο αλγόριθμος αποτελείται από την κλάση \lstinline!HeuristicPlayer! στην οποία υλοποιούνται οι
 συναρτήσεις  \lstinline!getNextMove()!,
-\lstinline!getEvaluation()! (οι οποίες ζητούνται από την εκφώνηση) και η 
+\lstinline!getEvaluation()! (οι οποίες ζητούνται από την εκφώνηση) και η
 \lstinline!calculateRisk()! (μία δίκη μας συνάρτηση, βοηθητική στην \lstinline!getEvaluation()!).
 Με τις συναρτήσεις αυτές, αρχικά, αξιολογούμε την θέση.
-Αυτό γίνεται με την \lstinline!calculateRisk()! και την 
+Αυτό γίνεται με την \lstinline!calculateRisk()! και την
 \lstinline!getEvaluation()!.
-Αντλώντας πληροφορίες για τους γείτονες, τις διαθέσιμες τιμές που είναι 
-πιθανό να έρθουν για την επόμενη κίνηση  για τον αντίπαλο (και για εμάς) και τον αριθμό 
+Αντλώντας πληροφορίες για τους γείτονες, τις διαθέσιμες τιμές που είναι
+πιθανό να έρθουν για την επόμενη κίνηση  για τον αντίπαλο (και για εμάς) και τον αριθμό
 των γειτονικών tiles των γειτόνων μας,
 βρίσκουμε έναν αριθμό που αξιολογεί κάθε κενή θέση στο ταμπλό
 (δηλαδή κάθε πιθανή επόμενη θέση μας).
 Όσο μεγαλύτερος ο αριθμός, τόσο ευνοϊκότερη η θέση.
-Στη συνέχεια με την συνάρτηση \lstinline!getNetMove()! βρίσκουμε τη 
+Στη συνέχεια με την συνάρτηση \lstinline!getNetMove()! βρίσκουμε τη
 θέση με το μεγαλύτερο αριθμό αξιολόγησης και έπειτα τοποθετούμε το στρατό μας σε αυτή.
 Επίσης,στην κλάση υπάρχουν, ήδη, υλοποιημένοι οι constructors.
-Τέλος, να σημειωθεί ότι δημιουργήσαμε, μία ακόμη επιπλέον, συνάρτηση την \lstinline!updateOpponentsPool()! για να 
+Τέλος, να σημειωθεί ότι δημιουργήσαμε, μία ακόμη επιπλέον, συνάρτηση την \lstinline!updateOpponentsPool()! για να
 παρακολουθούμε τις διαθέσιμες κινήσεις του αντιπάλου.
 \end{sloppypar}
 
-\section{Συνάρτηση \texttt{calculateRisk()}}
+\section{Συνάρτηση \texttt{calculateRisk()}} \label{sec:calculateRisk}
 \begin{lstlisting}[numbers=none, breaklines=true, title={Declaration της συνάρτησης}]
 private double calculateRisk(final Tile tile, final Board board, final int nextTileScore)
 \end{lstlisting}
@@ -157,6 +157,7 @@ P \cdot \lstinline[basicstyle=\ttfamily]!scoreTile!
 διαιρούμε με το τετράγωνο του \lstinline!emptyNeighbors! και πολλαπλασιάζουμε το τελικό αποτέλεσμα με το $2$.
 Αυτό έχει ως σκοπό την μεγαλύτερη μείωση του \lstinline!risk! σε πλακίδια με πολλούς γείτονες.
 Ο πολλαπλασιασμός με το $2$ αποσκοπεί στην αύξηση του συντελεστή ώστε να μην γίνει πολύ μικρός.
+Ο συντελεστής αυτός βρέθηκε πειραματικά μετά από αρκετές δοκιμές.
 \end{itemize}
 
 Μετά από αρκετά πειράματα αποφασίσαμε ότι ο τύπος \hyperref[eq:22]{\ref{eq:22}} είναι καλύτερος και για αυτό χρησιμοποιούμε αυτόν στην τελική έκδοση.
@@ -166,7 +167,6 @@ P \cdot \lstinline[basicstyle=\ttfamily]!scoreTile!
     \noindent\begin{minipage}{\textwidth}
         \centering
         \captionsetup{type={figure}}
-%        \includegraphics[width=\linewidth]{img/11.pdf}
         \includegraphics[height=0.45\textheight]{img/11.pdf}
         \captionof{figure}{Γράφημα του \ref{eq:11} στην αρχή του παιχνιδιού}
     \end{minipage} %
@@ -253,7 +253,7 @@ scoreFromRisk += calculateRisk(neighbor, board, randomNumber);
 
 \item Η επιστρεφόμενη τιμή της συνάρτησης είναι το άθροισμα
 \lstinline!scoreFromAlies + scoreFromEnemies + scoreFromRisk!.
-Ουσιαστικά, με την λούπα βρίσκουμε για κάθε πιθανή θέση, πόσο σκορ θα κερδίζαμε αν τοποθετούσαμε το πλακίδιο μας εκεί.
+Ουσιαστικά, με τη λούπα βρίσκουμε για κάθε πιθανή θέση, πόσο σκορ θα κερδίζαμε αν τοποθετούσαμε το πλακίδιο μας εκεί.
 Ωστόσο, πέρα από το συνολικό σκορ που κερδίζουμε σε κάθε θέση υπάρχουν και άλλοι
 παράγοντες που επηρεάζουν την τελική επίδοση μας (πχ πόσο προστατευμένοι είμαστε, πόσο εύκολα μπορεί να μας πάρει το στρατό ο αντίπαλος κτλ) και για αυτό χρησιμοποιεί η \lstinline!calculateRisk()!
 \end{itemize}
@@ -262,14 +262,14 @@ scoreFromRisk += calculateRisk(neighbor, board, randomNumber);
 \begin{lstlisting}[numbers=none, title={Declaration της συνάρτησης}]
 public int[] getNextMove(final Board board, final int randomNumber)
 \end{lstlisting}
-Η συνάρτηση αυτή δέχεται ως ορίσματα ένα αντικείμενο τύπου \lstinline!Board! και 
-την μεταβλητή \lstinline!randomNumber! και επιστρέφει έναν 
-μονοδιάστατο πίνακα(\lstinline!result[3]!) με τις συντεταγμένες \lstinline!x,y! 
-που αντιστοιχούν στην θέση με την καλύτερη αξιολόγηση καθώς και τον 
+Η συνάρτηση αυτή δέχεται ως ορίσματα ένα αντικείμενο τύπου \lstinline!Board! και
+την μεταβλητή \lstinline!randomNumber! και επιστρέφει έναν
+μονοδιάστατο πίνακα(\lstinline!result[3]!) με τις συντεταγμένες \lstinline!x,y!
+που αντιστοιχούν στην θέση με την καλύτερη αξιολόγηση καθώς και τον
 \lstinline!randomNumber!.
 
 Η δομή της συνάρτησης είναι η εξής:\begin{itemize}
-\item Καλούμε τη συνάρτηση\lstinline! updateOpponentPool()! την 
+\item Καλούμε τη συνάρτηση\lstinline!updateOpponentPool()! την
 οποία αναλύουμε στο \hyperref[sec:updateOpponentsPool]{\ref{sec:updateOpponentsPool}}
 
 \item Καλούμε τη συνάρτηση \lstinline!getMyPool()! η οποία επιστρέφει ένα αντικείμενο τύπου \lstinline!HashMap! που αναπαριστά το σύνολο των διαθέσιμων τιμών που είναι πιθανό να έρθουν για την επόμενη κίνηση
@@ -289,15 +289,15 @@ final Tile tile = board.getTile(j, i);
 \end{lstlisting}
 
 \item Αν η θέση είναι κενή (άρα μπορούμε να τοποθετήσουμε το νέο μας πλακίδιο εκεί),
-τότε καλούμε την \lstinline!getEvaluation()! και αποθηκεύουμε την επιστρεφόμενη τιμή 
+τότε καλούμε την \lstinline!getEvaluation()! και αποθηκεύουμε την επιστρεφόμενη τιμή
 στην μεταβλητή \lstinline!evaluation!.
 \begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
 if (tile.getPlayerId() == 0) {
     final double evaluation = getEvaluation(board, randomNumber, tile);
 \end{lstlisting}
 
-\item Αν η \lstinline!evaluation! είναι μεγαλύτερη της 
-\lstinline!max! (μία μεταβλητή την οποία έχουμε αρχικοποιήσει αρχικά στη τιμή \lstinline!Double.NEGATIVE_INFINITY!) αποθηκεύουμε 
+\item Αν η \lstinline!evaluation! είναι μεγαλύτερη της
+\lstinline!max! (μία μεταβλητή την οποία έχουμε αρχικοποιήσει αρχικά στη τιμή \lstinline!Double.NEGATIVE_INFINITY!) αποθηκεύουμε
 τις συντεταγμένες του πλακιδίου στον πίνακα \lstinline!result!.
 \begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
 if (evaluation >= max) {
@@ -307,8 +307,8 @@ if (evaluation >= max) {
 }
 \end{lstlisting}
 
-\item Όταν τελειώσει η \lstinline!for! θα έχουμε αποθηκευμένο στη \lstinline!max! το μεγαλύτερο \lstinline!evaluation! και στον πίνακα \lstinline!result! τις 
-αντίστοιχες συντεταγμένες του πλακιδίου με το μεγαλύτερο \lstinline!evaluation!.
+\item \begin{sloppypar}Όταν τελειώσει η \lstinline!for! θα έχουμε αποθηκευμένο στη \lstinline!max! το μεγαλύτερο \lstinline!evaluation! και στον πίνακα \lstinline!result! τις
+αντίστοιχες συντεταγμένες του πλακιδίου με το μεγαλύτερο \lstinline!evaluation!.\end{sloppypar}
 
 \item Τοποθετούμε στη τρίτη θέση του πίνακα result το \lstinline!randomNumber!.
 \begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
