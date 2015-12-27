@@ -7,25 +7,38 @@ import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
+/**
+ * The HeuristicPlayer class implements a player for the game that logically
+ * chooses the next tile.
+ *
+ * @author Orestis
+ * @author Ioanna
+ */
 public class HeuristicPlayer implements AbstractPlayer {
+    // For a more detailed explanation please check report.pdf
 
-    @SuppressWarnings("unused")
-    private static void printHashMap(final HashMap<Integer, Integer> map) {
-        for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            final Integer key = entry.getKey();
-            final Integer value = entry.getValue();
-            System.out.println("key, " + key + " value " + value);
-        }
-    }
-
+    /** The current score. */
     int score;
+    /** The id of the player. */
     int id;
+    /** The id of the opponent. */
     int opponentId;
+    /** The name of the player. */
     String name;
+    /** The number of tiles. */
     int numOfTiles;
+
+    // Initialize a HashMap structure
     private final HashMap<Integer, Integer> opponentsPool = new HashMap<Integer, Integer>();
+    // Declare a HashMap structure
     private HashMap<Integer, Integer> myPool;
 
+    /**
+     *
+     * @param pid
+     *            The opponent's id.
+     * @return a HashMap with all the available opponent's moves.
+     */
     public HeuristicPlayer(final Integer pid) {
         id = pid;
         opponentId = (pid == 1) ? 2 : 1;
@@ -35,6 +48,16 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
     }
 
+    /**
+     *
+     * @param tile
+     *            An object in the class Tile.
+     * @param board
+     *            An object in the class Board.
+     * @param nextTileScore
+     *            It is the randomNumber.
+     * @return a double which represents the "safety" of the move.
+     */
     private double calculateRisk(final Tile tile, final Board board, final int nextTileScore) {
         HashMap<Integer, Integer> map;
         final int tileId = tile.getPlayerId();
@@ -79,6 +102,15 @@ public class HeuristicPlayer implements AbstractPlayer {
         }
     }
 
+    /**
+     *
+     * @param board
+     *            An object in the class Board.
+     * @param randomNumber
+     * @param tile
+     *            An object in the class Tile.
+     * @return a double.It represents the evaluation of this move.
+     */
     public double getEvaluation(final Board board, final int randomNumber, final Tile tile) {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         int scoreFromAlies = 0;
@@ -110,6 +142,12 @@ public class HeuristicPlayer implements AbstractPlayer {
         return name;
     }
 
+    /**
+     * @param board
+     * @param randomNumber
+     * @return a matrix of three (int)numbers.The matrix contains the
+     *         coordinates of next move and the random number.
+     */
     public int[] getNextMove(final Board board, final int randomNumber) {
         double max = Double.NEGATIVE_INFINITY;
         final int[] result = new int[3];
@@ -129,7 +167,6 @@ public class HeuristicPlayer implements AbstractPlayer {
             }
         }
 
-        // System.out.println(result[0] + " " + result[1] + "==" + max);
         result[2] = randomNumber;
         return result;
     }
@@ -160,12 +197,16 @@ public class HeuristicPlayer implements AbstractPlayer {
         this.score = score;
     }
 
+    /**
+     *
+     * @param board
+     */
     private void updateOpponentsPool(final Board board) {
         final int[] lastMove = board.getOpponentsLastMove();
         if (lastMove[0] == -1) {
             return;
         }
-        // printHashMap(opponentsPool);
+
         final Tile lastMoveTile = board.getTile(lastMove[0], lastMove[1]);
         assert (opponentId == lastMoveTile.getPlayerId());
         final Integer key = lastMoveTile.getScore();
