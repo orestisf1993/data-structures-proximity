@@ -38,22 +38,22 @@ public class HeuristicPlayer implements AbstractPlayer {
     private double calculateRisk(final Tile tile, final Board board, final int nextTileScore) {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         HashMap<Integer, Integer> map;
-        if (opponentId == tile.getPlayerId()) {
-            map = opponentsPool;
-        } else {
+        final int tileId = tile.getPlayerId();
+        final double scoreTile = tile.getScore();
+        final boolean isEnemyBigger = (tileId == opponentId && nextTileScore <= scoreTile);
+        if (isEnemyBigger) {
             map = myPool;
+        } else {
+            map = opponentsPool;
         }
 
-        double emptyNeighbors = 0;
-        final double scoreTile = tile.getScore();
+        double emptyNeighbors = (tileId == 0) ? 1 : 0;
         for (final Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() == 0) {
                 emptyNeighbors++;
             }
         }
-        if (emptyNeighbors == 0) {
-            return 0;
-        }
+        assert (emptyNeighbors != 0);
 
         double totalValuesCount = 0;
         double biggerValuesCount = 0;
@@ -65,9 +65,13 @@ public class HeuristicPlayer implements AbstractPlayer {
                 biggerValuesCount += tileCount;
             }
         }
+        if (totalValuesCount == 0) {
+            return 0;
+        }
 
-        final double risk = (scoreTile * biggerValuesCount) / (emptyNeighbors * totalValuesCount);
-        if (tile.getPlayerId() == opponentId && nextTileScore <= scoreTile) {
+        final double risk = 2 * (scoreTile * biggerValuesCount)
+                / (emptyNeighbors * emptyNeighbors * totalValuesCount);
+        if (isEnemyBigger) {
             return -risk;
         } else {
             return risk;
