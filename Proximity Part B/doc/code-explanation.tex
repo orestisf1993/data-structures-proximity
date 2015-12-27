@@ -21,6 +21,178 @@
 \end{sloppypar}
 
 \section{Συνάρτηση \texttt{calculateRisk()}}
+\begin{lstlisting}[numbers=none, breaklines=true, title={Declaration της συνάρτησης}]
+private double calculateRisk(final Tile tile, final Board board, final int nextTileScore)
+\end{lstlisting}
+Η συνάρτηση αυτή δέχεται ως ορίσματα ένα αντικείμενο τύπου \lstinline!Tile!,
+ένα αντικείμενο τύπου \lstinline!Board! και
+την μεταβλητή \lstinline!nextTileScore! που είναι το score του πλακιδίου που πρέπει να παίξουμε.
+Επιστρέφει έναν \lstinline!double! με το κομμάτι του evaluation που αντιστοιχεί στην "ασφάλεια" της κίνησης.
+Αυτό εξαρτάται από τους εξής παράγοντες:
+\begin{enumerate}
+\item Κατά πόσο το πλακίδιο που τοποθετούμε καλύπτεται από άλλα πλακίδια.
+Αν έχει λίγους γείτονες μπορεί να κλαπεί πιο εύκολα από τον αντίπαλο.
+\item Κατά πόσο βελτιώνεται ο βαθμός κάλυψης των γειτονικών φιλικών πλακιδίων.
+Πχ αν πρέπει να παίξουμε ένα πλακίδιο με score $1$ μπορούμε να το τοποθετήσουμε σε τέτοια θέση που "κλείνει" ένα γειτονικό, φιλικό πλακίδιο με score $10$.
+\item Κατά πόσο βελτιώνεται ο βαθμός κάλυψης των γειτονικών εχθρικών πλακιδίων.
+Αν τοποθετήσουμε το πλακίδιο μας δίπλα σε ένα εχθρικό το οποίο δεν μπορούμε να το κλέψουμε τώρα, γίνεται πιο δύσκολο να το κλέψουμε αργότερα.
+\end{enumerate}
+
+Η δομή της συνάρτησης είναι η εξής:
+\begin{itemize}
+\item Το όρισμα \lstinline!tile! είναι το πλακίδιο για το οποίο πρέπει να υπολογίσουμε την ασφάλεια της τρέχουσας κίνησης.
+\begin{enumerate}
+\item \label{tile:isEnemyBigger}
+Αν το \lstinline!tile! είναι του αντιπάλου και δεν είναι μικρότερο από το δικό μας, ο υπολογισμός γίνεται σύμφωνα με τα εναπομείναντα πλακίδια μας (\lstinline!myPool!).
+
+\item \label{tile:tileIdMy}
+Αν το \lstinline!tile! είναι δικό μας ή θα γίνει δικό μας,
+ο υπολογισμός γίνεται σύμφωνα με τα εναπομείναντα πλακίδια του αντιπάλου (\lstinline!opponentsPool!).
+
+\item \label{tile:tileId0}
+Αν το \lstinline!tile! είναι άδειο, υπολογίζουμε την ασφάλεια για την τοποθέτηση πλακιδίου με score
+\lstinline!nextTileScore! σε αυτή τη θέση πάλι σύμφωνα με τα εναπομείναντα πλακίδια του αντιπάλου (\lstinline!opponentsPool!).
+
+\end{enumerate}
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+HashMap<Integer, Integer> map;
+final int tileId = tile.getPlayerId();
+final boolean isEmpty = (tileId == 0);
+final double scoreTile = isEmpty ? nextTileScore : tile.getScore();
+final boolean isEnemyBigger = (tileId == opponentId && nextTileScore <= scoreTile);
+if (isEnemyBigger) {
+    map = myPool;
+} else {
+    map = opponentsPool;
+}
+\end{lstlisting}
+
+\item Βρίσκουμε τον αριθμό των κενών γειτόνων γύρω από το \lstinline!tile!.
+Το άθροισμα στην
+\hyperref[tile:tileId0]{περίπτωση}
+που το \lstinline!tile! είναι άδειο αρχίζει από το \lstinline!1!.
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
+double emptyNeighbors = isEmpty ? 1 : 0;
+for (final Tile neighbor : neighbors) {
+    if (neighbor != null && neighbor.getPlayerId() == 0) {
+        emptyNeighbors++;
+    }
+}
+\end{lstlisting}
+
+\item Υπολογίζουμε από το \lstinline!map! τον αριθμό των πλακιδίων με μεγαλύτερο score από το \lstinline!tile! μας και τον συνολικό αριθμό των πλακιδίων.
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+double totalValuesCount = 0;
+double biggerValuesCount = 0;
+for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
+    final Integer tileValue = entry.getKey();
+    final Integer tileCount = entry.getValue();
+    totalValuesCount += tileCount;
+    if (tileValue > scoreTile) {
+        biggerValuesCount += tileCount;
+    }
+}
+if (totalValuesCount == 0) {
+    return 0;
+}
+\end{lstlisting}
+
+\item Υπολογίζουμε την "ασφάλεια" (\lstinline!risk!) του πλακιδίου σύμφωνα με τον τύπο μας.
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+final double percentLarger = biggerValuesCount / totalValuesCount;
+final double risk = 2 * percentLarger * (scoreTile) / (emptyNeighbors * emptyNeighbors);
+\end{lstlisting}
+Κατασκευάσαμε δύο πιθανούς τύπους για τον υπολογισμό του \lstinline!risk!:
+% Dunno if lstinline inside equation enviroment is a good idea.
+% The log doesn't show anything concerning though.
+\begin{equation}\label{eq:11}
+\lstinline[basicstyle=\ttfamily]!risk! =
+\frac{
+    \frac{
+        \lstinline[basicstyle=\ttfamily]!biggerValuesCount!
+    }
+    {
+        \lstinline[basicstyle=\ttfamily]!totalValuesCount!
+    } \cdot \lstinline[basicstyle=\ttfamily]!scoreTile!
+}{
+    \lstinline[basicstyle=\ttfamily]!emptyNeighbors!
+}
+\end{equation}
+ή
+\begin{equation}\label{eq:22}
+\lstinline[basicstyle=\ttfamily]!risk! =
+2 \cdot
+\frac{
+    \frac{
+        \lstinline[basicstyle=\ttfamily]!biggerValuesCount!
+    }
+    {
+        \lstinline[basicstyle=\ttfamily]!totalValuesCount!
+    } \cdot \lstinline[basicstyle=\ttfamily]!scoreTile!
+}{
+    \lstinline[basicstyle=\ttfamily]!emptyNeighbors!^2
+}
+\end{equation}
+
+Η λογική και των δύο είναι παρόμοια. Ο λόγος: \[
+P = \frac{
+    \lstinline[basicstyle=\ttfamily]!biggerValuesCount!
+}
+{
+    \lstinline[basicstyle=\ttfamily]!totalValuesCount!
+}
+\] δηλώνει την πιθανότητα να κληρωθεί στον αντίπαλο πλακίδιο με μεγαλύτερο score από το \lstinline!tile!.
+Το γινόμενό του με το \lstinline!scoreTile!: \[
+P \cdot \lstinline[basicstyle=\ttfamily]!scoreTile!
+\] αντιπροσωπεύει το προσδόκιμο αριθμό πόντων που μπορεί να κλέψει ένας παίκτης αν επιλέξει να παίξει σε ένα από τα γειτονικά πλακίδια του \lstinline!tile!.
+Έπειτα, προσπαθούμε να περιορίσουμε αυτόν τον αριθμό σύμφωνα με τον αριθμό των κενών γειτόνων.
+Όσο πιο πολλούς κενούς γείτονες έχει το \lstinline!tile! τόσο λιγότερο νόημα έχει να προσπαθήσουμε να το καλύψουμε.
+Σε αυτό το σημείο βρίσκεται η διαφορά των δύο τύπων:
+\begin{itemize}
+\item Στον \hyperref[eq:11]{\ref{eq:11}}
+διαιρούμε απλώς με το \lstinline!emptyNeighbors!.
+
+\item Στον \hyperref[eq:22]{\ref{eq:22}}
+διαιρούμε με το τετράγωνο του \lstinline!emptyNeighbors! και πολλαπλασιάζουμε το τελικό αποτέλεσμα με το $2$.
+Αυτό έχει ως σκοπό την μεγαλύτερη μείωση του \lstinline!risk! σε πλακίδια με πολλούς γείτονες.
+Ο πολλαπλασιασμός με το $2$ αποσκοπεί στην αύξηση του συντελεστή ώστε να μην γίνει πολύ μικρός.
+\end{itemize}
+
+Μετά από αρκετά πειράματα αποφασίσαμε ότι ο τύπος \hyperref[eq:22]{\ref{eq:22}} είναι καλύτερος και για αυτό χρησιμοποιούμε αυτόν στην τελική έκδοση.
+\noindent\begin{center}
+    \selectlanguage{greek}
+    \centering
+    \noindent\begin{minipage}{\textwidth}
+        \centering
+        \captionsetup{type={figure}}
+%        \includegraphics[width=\linewidth]{img/11.pdf}
+        \includegraphics[height=0.45\textheight]{img/11.pdf}
+        \captionof{figure}{Γράφημα του \ref{eq:11} στην αρχή του παιχνιδιού}
+    \end{minipage} %
+    \vfill
+    \noindent\begin{minipage}{\textwidth}
+        \centering
+        \captionsetup{type={figure}}
+        \includegraphics[height=0.45\textheight]{img/22.pdf}
+        \captionof{figure}{Γράφημα του \ref{eq:22} στην αρχή του παιχνιδιού}
+    \end{minipage} %
+\end{center}
+
+\item Επιστρέφουμε \lstinline!-risk! αν το \lstinline!tile! είναι του αντιπάλου και μεγαλύτερο από το
+\lstinline!nextTileScore! (καθώς βελτιώνουμε την θέση του).
+Αλλιώς, επιστρέφουμε \lstinline!risk!.
+\begin{lstlisting}[numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
+if (isEnemyBigger) {
+    return -risk;
+} else {
+    return risk;
+}
+\end{lstlisting}
+\end{itemize}
+
+
+\section{Συνάρτηση \texttt{getNextMove()}}
 \begin{lstlisting}[numbers=none, title={Declaration της συνάρτησης}]
 public int[] getNextMove(final Board board, final int randomNumber)
 \end{lstlisting}
@@ -63,9 +235,9 @@ if (tile.getPlayerId() == 0) {
 τις συντεταγμένες του πλακιδίου στον πίνακα \lstinline!result!.
 \begin{lstlisting}[breaklines=true, numbers=none, aboveskip=\smallskipamount, belowskip=\smallskipamount, captionpos=none]
 if (evaluation >= max) {
-	max = evaluation;
-	result[0] = tile.getX();
-	result[1] = tile.getY();
+    max = evaluation;
+    result[0] = tile.getX();
+    result[1] = tile.getY();
 }
 \end{lstlisting}
 
