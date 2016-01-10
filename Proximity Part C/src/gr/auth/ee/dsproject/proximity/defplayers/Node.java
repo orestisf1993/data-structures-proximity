@@ -12,10 +12,10 @@ public class Node {
     Board nodeBoard;
     double nodeEvaluation;
 
-    Node() {
+    public Node() {
     }
 
-    double evaluate() {
+    public double evaluate() {
         // TODO: call evaluator here
         return 0.0;
     }
