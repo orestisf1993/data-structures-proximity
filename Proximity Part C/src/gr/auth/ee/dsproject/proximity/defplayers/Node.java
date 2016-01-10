@@ -6,13 +6,35 @@ import gr.auth.ee.dsproject.proximity.board.Board;
 
 public class Node {
     Node parent;
+
     ArrayList<Node> children;
+
     int nodeDepth;
     int[] nodeMove;
     Board nodeBoard;
     double nodeEvaluation;
 
-    public Node() {
+    /**
+     * @param nodeBoard
+     */
+    public Node(Board nodeBoard) {
+        this.nodeDepth = 0;
+        this.nodeBoard = nodeBoard;
+        this.children = new ArrayList<Node>();
+    }
+
+    /**
+     * @param parent
+     * @param nodeDepth
+     * @param nodeMove
+     * @param nodeBoard
+     */
+    public Node(Node parent, int nodeDepth, int[] nodeMove, Board nodeBoard) {
+        this.parent = parent;
+        this.nodeDepth = nodeDepth;
+        this.nodeMove = nodeMove;
+        this.nodeBoard = nodeBoard;
+        this.children = new ArrayList<Node>();
     }
 
     public double evaluate() {
