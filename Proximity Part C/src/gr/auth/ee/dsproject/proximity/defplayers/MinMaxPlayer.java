@@ -27,14 +27,11 @@ public class MinMaxPlayer implements AbstractPlayer {
     }
 
     public String getName() {
-
         return name;
-
     }
 
     public int[] getNextMove(final Board board, final int randomNumber) {
         return null;
-
     }
 
     public int getNumOfTiles() {
@@ -46,9 +43,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     }
 
     public void setId(final int id) {
-
         this.id = id;
-
     }
 
     public void setName(final String name) {
@@ -62,6 +57,10 @@ public class MinMaxPlayer implements AbstractPlayer {
 
     public void setScore(final int score) {
         this.score = score;
+    }
+
+    private int[] chooseMinMaxMove(Node root) {
+        return null;
     }
 
 }
