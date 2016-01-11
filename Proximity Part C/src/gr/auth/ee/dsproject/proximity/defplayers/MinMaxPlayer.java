@@ -22,40 +22,28 @@ public class MinMaxPlayer implements AbstractPlayer {
         name = "MinMaxPlayerTeam2";
     }
 
-    private Node chooseMinMaxMove(Node node) {
+    private int[] chooseMinMaxMove(Node node) {
         ArrayList<Node> children = node.getChildren();
-        if (children == null) {
+        if (children.isEmpty()) {
             node.evaluate();
-            return node;
+            return node.getNodeMove();
         }
-        int depth = node.getNodeDepth();
-        double bestValue = 0;
-        // min
-        if (depth % 2 == 1) {
-            bestValue = Double.POSITIVE_INFINITY;
-            for (Node child : children) {
-                Node result = chooseMinMaxMove(child);
-                double evaluation = result.getNodeEvaluation();
-                if (evaluation < bestValue) {
-                    bestValue = evaluation;
-                }
+        Node bestNode = null;
+
+        boolean minimizingPlayer = node.getNodeDepth() % 2 == 0;
+        double bestValue = minimizingPlayer ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        for (Node child : children) {
+            chooseMinMaxMove(child);
+            double evaluation = child.getNodeEvaluation();
+            boolean isBestValue = minimizingPlayer ? evaluation < bestValue
+                    : evaluation > bestValue;
+            if (isBestValue) {
+                bestNode = child;
+                bestValue = evaluation;
             }
         }
-        // max
-        else {
-            bestValue = Double.NEGATIVE_INFINITY;
-            for (Node child : children) {
-                Node result = chooseMinMaxMove(child);
-                double evaluation = result.getNodeEvaluation();
-                if (evaluation > bestValue) {
-                    bestValue = evaluation;
-                }
-            }
-
-        }
-
         node.setNodeEvaluation(bestValue);
-        return node;
+        return bestNode.getNodeMove();
     }
 
     private void createSubTree(final Node parent) {
@@ -123,8 +111,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         Node root = new Node(board);
         // create a tree of depth 2.
         createSubTree(root, randomNumber);
-        Node nextMove = chooseMinMaxMove(root);
-        return nextMove.getNodeMove();
+        return chooseMinMaxMove(root);
     }
 
     public int getNumOfTiles() {
