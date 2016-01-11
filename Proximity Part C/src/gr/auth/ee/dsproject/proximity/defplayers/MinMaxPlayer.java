@@ -1,6 +1,7 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
@@ -8,13 +9,16 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class MinMaxPlayer implements AbstractPlayer {
 
-    int score;
-    int id;
-    String name;
-    int numOfTiles;
+    private int score;
+    private int id;
+    private int opponentId;
+    private String name;
+    private int numOfTiles;
+    final private int MAX_DEPTH = 2;
 
     public MinMaxPlayer(final Integer pid) {
         id = pid;
+        opponentId = id == 1 ? 2 : 1;
         name = "MinMaxPlayerTeam2";
     }
 
@@ -54,61 +58,43 @@ public class MinMaxPlayer implements AbstractPlayer {
         return node;
     }
 
-    public void createMySubTree(final Node parent, final int depth, final int randomNumber) {
-        // - Find the empty tile spots of the board of the parent.
-        // - For each empty tile spot on the board:
-        // ----- Create a clone of the parent node’s board and simulate putting
-        // a tile on this spot by using boardAfterMove() on the parent node
-        // board.
-        // ----- Create a new node as child of the parent node using new board
-        // state.
-        // ----- Add the node as child of the parent node.
-        // ----- Complete the tree branches by calling
-        // ----- createOpponentSubtree(newNode, depth+1)
+    private void createSubTree(final Node parent) {
+        Board board = parent.getNodeBoard();
+        final int depth = parent.getNodeDepth() + 1;
+        HashMap<Integer, Integer> pool = depth % 2 == 1 ? board.getMyPool()
+                : board.getOpponentsPool();
+        int s = (int) ProximityUtilities.calculateMedianForPool(pool);
+        createSubTree(parent, s);
+    }
 
+    private void createSubTree(final Node parent, final int s) {
+        // Find the empty tile spots of the board of the parent.
         Board board = parent.getNodeBoard();
         ArrayList<Tile> emptyTiles = findEmptyTiles(board);
+        final int depth = parent.getNodeDepth() + 1;
+        final int nodeId = depth % 2 == 1 ? id : opponentId;
 
         for (Tile emptyTile : emptyTiles) {
-            // Get needed values for Node() call.
+            // Get needed values for Node() and boardAfterMove() call.
             int x = emptyTile.getX();
             int y = emptyTile.getY();
-            int s = randomNumber;
             int[] move = new int[] { x, y };
-            Board nextBoard = ProximityUtilities.boardAfterMove(id, board, x, y, s);
+
+            // Simulate putting a tile on this spot on the parent node board.
+            Board nextBoard = ProximityUtilities.boardAfterMove(nodeId, board, x, y, s);
 
             // Create the new node.
-            Node newNode = new Node(parent, depth + 1, move, nextBoard);
+            Node newNode = new Node(parent, depth, move, nextBoard);
 
-            // Add it as a child of parent node so they are connected.
+            // Add the node as child of the parent node.
             ArrayList<Node> children = parent.getChildren();
             children.add(newNode);
             parent.setChildren(children);
 
             // Add opponent's branches.
-            createOpponentSubtree(newNode, depth + 1);
-        }
-    }
-
-    public void createOpponentSubtree(final Node parent, final int depth) {
-        Board board = parent.getNodeBoard();
-        ArrayList<Tile> emptyTiles = findEmptyTiles(board);
-
-        for (Tile emptyTile : emptyTiles) {
-            // Get needed values for Node() call.
-            int x = emptyTile.getX();
-            int y = emptyTile.getY();
-            int s = (int) ProximityUtilities.calculateMedianForPool(board.getOpponentsPool());
-            int[] move = new int[] { x, y };
-            Board nextBoard = ProximityUtilities.boardAfterMove(id, board, x, y, s);
-
-            // Create the new node.
-            Node newNode = new Node(parent, depth + 1, move, nextBoard);
-
-            // Add it as a child of parent node so they are connected.
-            ArrayList<Node> children = parent.getChildren();
-            children.add(newNode);
-            parent.setChildren(children);
+            if (depth < MAX_DEPTH) {
+                createSubTree(newNode);
+            }
         }
     }
 
@@ -136,7 +122,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     public int[] getNextMove(final Board board, final int randomNumber) {
         Node root = new Node(board);
         // create a tree of depth 2.
-        createMySubTree(root, 1, randomNumber);
+        createSubTree(root, randomNumber);
         Node nextMove = chooseMinMaxMove(root);
         return nextMove.getNodeMove();
     }
