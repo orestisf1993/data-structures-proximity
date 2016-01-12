@@ -45,21 +45,23 @@ public class MinMaxPlayer implements AbstractPlayer {
         }
     }
 
-    private int[] chooseMinMaxMove(Node node) {
+    int[] chooseMinMaxMove(Node node) {
         ArrayList<Node> children = node.getChildren();
         if (children.isEmpty()) {
             node.evaluate();
             return node.getNodeMove();
         }
-        Node bestNode = null;
 
-        boolean minimizingPlayer = node.getNodeDepth() % 2 == 0;
+        boolean minimizingPlayer = node.getNodeDepth() % 2 == 1;
+        Node bestNode = children.get(0);
         double bestValue = minimizingPlayer ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (Node child : children) {
+            assert ((child.getId() == opponentId) == minimizingPlayer);
             chooseMinMaxMove(child);
             double evaluation = child.getNodeEvaluation();
             boolean isBestValue = minimizingPlayer ? evaluation < bestValue
                     : evaluation > bestValue;
+            logger.log(Level.FINEST, evaluation + ":" + isBestValue + " at " + node.getNodeDepth());
             if (isBestValue) {
                 bestNode = child;
                 bestValue = evaluation;
@@ -69,7 +71,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         return bestNode.getNodeMove();
     }
 
-    private void createSubTree(final Node parent) {
+    void createSubTree(final Node parent) {
         Board board = parent.getNodeBoard();
         final int depth = parent.getNodeDepth() + 1;
         HashMap<Integer, Integer> pool = depth % 2 == 1 ? board.getMyPool()
@@ -98,7 +100,7 @@ public class MinMaxPlayer implements AbstractPlayer {
             Board nextBoard = ProximityUtilities.boardAfterMove(nodeId, board, x, y, s);
 
             // Create the new node.
-            Node newNode = new Node(parent, depth, move, nextBoard);
+            Node newNode = new Node(parent, depth, move, nextBoard, s);
 
             // Add the node as child of the parent node.
             ArrayList<Node> children = parent.getChildren();
@@ -112,7 +114,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         }
     }
 
-    private ArrayList<Tile> findEmptyTiles(Board board) {
+    ArrayList<Tile> findEmptyTiles(Board board) {
         ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
@@ -134,10 +136,14 @@ public class MinMaxPlayer implements AbstractPlayer {
     }
 
     public int[] getNextMove(final Board board, final int randomNumber) {
-        Node root = new Node(board);
-        // create a tree of depth 2.
+        // opponentId so deprth 1 gets our id.
+        Node root = new Node(board, opponentId);
+        // create a tree of depth MAX_DEPTH.
         createSubTree(root, randomNumber);
-        return chooseMinMaxMove(root);
+        int[] nextMove = chooseMinMaxMove(root);
+        logger.log(Level.INFO,
+                nextMove[0] + "," + nextMove[1] + " for randomNumber = " + randomNumber);
+        return nextMove;
     }
 
     public int getNumOfTiles() {
