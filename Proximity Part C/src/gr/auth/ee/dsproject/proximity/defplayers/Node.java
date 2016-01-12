@@ -17,10 +17,9 @@ public class Node {
     /**
      * @param nodeBoard
      */
-    public Node(Board nodeBoard) {
-        this.nodeDepth = 0;
-        this.nodeBoard = nodeBoard;
-        this.children = new ArrayList<Node>();
+    public Node(Board nodeBoard, int id) {
+        // constructor used for the root Node
+        this(null, 0, null, nodeBoard, -1);
     }
 
     /**
