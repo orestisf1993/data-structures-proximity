@@ -1,10 +1,16 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
 
 public class Node {
+    private static Logger logger;
     Node parent;
 
     ArrayList<Node> children;
@@ -20,6 +26,27 @@ public class Node {
     public Node(Board nodeBoard, int id) {
         // constructor used for the root Node
         this(null, 0, null, nodeBoard, -1);
+
+        if (logger == null) {
+            logger = Logger.getLogger("Node");
+
+            logger.setLevel(Level.ALL);
+            logger.setUseParentHandlers(false);
+
+            FileHandler fh;
+            try {
+                // This block configure the logger with handler and formatter
+                fh = new FileHandler("node.log");
+                logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
+                logger.log(Level.FINEST, "Created Node");
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -34,6 +61,12 @@ public class Node {
         this.nodeMove = nodeMove;
         this.nodeBoard = nodeBoard;
         this.children = new ArrayList<Node>();
+
+        if (parent != null) {
+            logger = parent.getLogger();
+        }
+    }
+
     }
 
     public double evaluate() {
@@ -49,6 +82,10 @@ public class Node {
     }
 
     /**
+     * public Logger getLogger() { return logger; }
+     * 
+     * /**
+     * 
      * @return the nodeBoard
      */
     public Board getNodeBoard() {

@@ -1,13 +1,19 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class MinMaxPlayer implements AbstractPlayer {
+    private final static Logger logger = Logger.getLogger("log");
 
     private int score;
     private int id;
@@ -20,6 +26,23 @@ public class MinMaxPlayer implements AbstractPlayer {
         id = pid;
         opponentId = id == 1 ? 2 : 1;
         name = "MinMaxPlayerTeam2";
+
+        logger.setLevel(Level.ALL);
+        logger.setUseParentHandlers(false);
+
+        FileHandler fh;
+        try {
+            // This block configure the logger with handler and formatter
+            fh = new FileHandler("log.log");
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.log(Level.FINEST, "Created MinMaxPlayer");
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private int[] chooseMinMaxMove(Node node) {
@@ -55,12 +78,15 @@ public class MinMaxPlayer implements AbstractPlayer {
         createSubTree(parent, s);
     }
 
-    private void createSubTree(final Node parent, final int s) {
+    void createSubTree(final Node parent, final int s) {
         // Find the empty tile spots of the board of the parent.
         Board board = parent.getNodeBoard();
         ArrayList<Tile> emptyTiles = findEmptyTiles(board);
         final int depth = parent.getNodeDepth() + 1;
         final int nodeId = depth % 2 == 1 ? id : opponentId;
+
+        logger.log(Level.FINEST, "Creating sub tree:" + "\ndepth: " + depth + "\nid: " + nodeId
+                + "\nemptyTiles: " + emptyTiles.size());
 
         for (Tile emptyTile : emptyTiles) {
             // Get needed values for Node() and boardAfterMove() call.
