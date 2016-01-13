@@ -122,6 +122,7 @@ public class Node {
 
         double totalValuesCount = 0;
         double biggerValuesCount = 0;
+        // TODO: try using next 10 moves instead of map.
         for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
             final Integer tileValue = entry.getKey();
             final Integer tileCount = entry.getValue();

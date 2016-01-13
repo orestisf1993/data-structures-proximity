@@ -63,6 +63,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     private int opponentId;
     private String name;
     private int numOfTiles;
+    private int[] nextNumbersToBePlayed;
 
     public MinMaxPlayer(final Integer pid) {
         id = pid;
@@ -115,20 +116,12 @@ public class MinMaxPlayer implements AbstractPlayer {
     }
 
     void createSubTree(final Node parent) {
-        Board board = parent.getNodeBoard();
-        final int depth = parent.getNodeDepth() + 1;
-        HashMap<Integer, Integer> pool = depth % 2 == 1 ? board.getMyPool()
-                : board.getOpponentsPool();
-        int s = (int) ProximityUtilities.calculateMedianForPool(pool);
-        createSubTree(parent, s);
-    }
-
-    void createSubTree(final Node parent, final int s) {
         // Find the empty tile spots of the board of the parent.
         Board board = parent.getNodeBoard();
         ArrayList<Tile> emptyTiles = findEmptyTiles(board);
         final int depth = parent.getNodeDepth() + 1;
         final int nodeId = depth % 2 == 1 ? id : opponentId;
+        final int s = nextNumbersToBePlayed[parent.getNodeDepth()];
 
         logger.log(Level.FINEST, "Creating sub tree:" + "\ndepth: " + depth + "\nid: " + nodeId
                 + "\nemptyTiles: " + emptyTiles.size());
@@ -166,13 +159,14 @@ public class MinMaxPlayer implements AbstractPlayer {
     }
 
     public int[] getNextMove(final Board board, final int randomNumber) {
-        // opponentId so deprth 1 gets our id.
+        nextNumbersToBePlayed = Board.getNextTenNumbersToBePlayed();
+        assert (randomNumber == nextNumbersToBePlayed[0]);
+        // opponentId so depth 1 gets our id.
         Node root = new Node(board, opponentId);
         // create a tree of depth MAX_DEPTH.
-        createSubTree(root, randomNumber);
+        createSubTree(root);
         int[] nextMove = chooseMinMaxMove(root);
-        logger.log(Level.INFO,
-                nextMove[0] + "," + nextMove[1] + " for randomNumber = " + randomNumber);
+        logger.log(Level.INFO, nextMove[0] + "," + nextMove[1]);
         return nextMove;
     }
 
