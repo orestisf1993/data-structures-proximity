@@ -27,6 +27,15 @@ public class MinMaxPlayer implements AbstractPlayer {
         return isLone;
     }
 
+    static boolean nodeLevelIsOurs(int depth) {
+        return depth % 2 == 1;
+    }
+
+    static boolean nodeLevelIsOurs(Node node) {
+        int depth = node.getNodeDepth();
+        return nodeLevelIsOurs(depth);
+    }
+
     private int score;
     private int id;
     private int opponentId;
