@@ -2,7 +2,6 @@ package gr.auth.ee.dsproject.proximity.defplayers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,18 +12,29 @@ import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class MinMaxPlayer implements AbstractPlayer {
+    // TODO: delete logger for final version.
     private final static Logger logger = Logger.getLogger("log");
+    // TODO: change to depth we want to use.
+    final private static int MAX_DEPTH = 2;
 
-    static boolean isTileLone(Tile tile, Board board) {
-        Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
-        boolean isLone = true;
-        for (Tile neighbor : neighbors) {
-            if (neighbor != null && neighbor.getPlayerId() != 0) {
-                isLone = false;
-                break;
+    private static ArrayList<Tile> findEmptyTiles(Board board) {
+        ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
+        int loneTilesCount = 0;
+        for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
+            for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
+                Tile tile = board.getTile(i, j);
+                if (tile.getPlayerId() == 0) {
+
+                    if (tileIsLone(tile, board) && (++loneTilesCount > MAX_DEPTH)) {
+                        continue;
+                    }
+
+                    // finally add the tile.
+                    emptyTiles.add(tile);
+                }
             }
         }
-        return isLone;
+        return emptyTiles;
     }
 
     static boolean nodeLevelIsOurs(int depth) {
@@ -36,12 +46,23 @@ public class MinMaxPlayer implements AbstractPlayer {
         return nodeLevelIsOurs(depth);
     }
 
+    static boolean tileIsLone(Tile tile, Board board) {
+        Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
+        boolean isLone = true;
+        for (Tile neighbor : neighbors) {
+            if (neighbor != null && neighbor.getPlayerId() != 0) {
+                isLone = false;
+                break;
+            }
+        }
+        return isLone;
+    }
+
     private int score;
     private int id;
     private int opponentId;
     private String name;
     private int numOfTiles;
-    final private int MAX_DEPTH = 2;
 
     public MinMaxPlayer(final Integer pid) {
         id = pid;
@@ -50,7 +71,6 @@ public class MinMaxPlayer implements AbstractPlayer {
 
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
-
         FileHandler fh;
         try {
             // This block configure the logger with handler and formatter
@@ -77,7 +97,9 @@ public class MinMaxPlayer implements AbstractPlayer {
         Node bestNode = children.get(0);
         double bestValue = minimizingPlayer ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (Node child : children) {
+            // if we are minimizing then it is an enemy's node.
             assert ((child.getId() == opponentId) == minimizingPlayer);
+
             chooseMinMaxMove(child);
             double evaluation = child.getNodeEvaluation();
             boolean isBestValue = minimizingPlayer ? evaluation < bestValue
@@ -133,26 +155,6 @@ public class MinMaxPlayer implements AbstractPlayer {
                 createSubTree(newNode);
             }
         }
-    }
-
-    private ArrayList<Tile> findEmptyTiles(Board board) {
-        ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
-        int loneTilesCount = 0;
-        for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
-            for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
-                Tile tile = board.getTile(i, j);
-                if (tile.getPlayerId() == 0) {
-
-                    if (isTileLone(tile, board) && (++loneTilesCount > MAX_DEPTH)) {
-                        continue;
-                    }
-
-                    // finally add the tile.
-                    emptyTiles.add(tile);
-                }
-            }
-        }
-        return emptyTiles;
     }
 
     public int getId() {

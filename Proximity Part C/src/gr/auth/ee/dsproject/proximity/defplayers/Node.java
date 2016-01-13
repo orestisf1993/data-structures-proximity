@@ -13,6 +13,7 @@ import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
+// TODO: rename to correct class name for assignment.
 public class Node {
     private static Logger logger;
     Node parent;
@@ -25,8 +26,8 @@ public class Node {
     int[] nodeMove;
     Board nodeBoard;
     double nodeEvaluation;
-    HashMap<Integer, Integer> myPool;
-    HashMap<Integer, Integer> opponentsPool;
+    private HashMap<Integer, Integer> myPool;
+    private HashMap<Integer, Integer> opponentsPool;
 
     /**
      * @param nodeBoard
