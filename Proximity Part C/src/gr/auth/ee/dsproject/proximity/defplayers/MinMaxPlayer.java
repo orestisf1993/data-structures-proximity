@@ -15,6 +15,18 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 public class MinMaxPlayer implements AbstractPlayer {
     private final static Logger logger = Logger.getLogger("log");
 
+    static boolean isTileLone(Tile tile, Board board) {
+        Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
+        boolean isLone = true;
+        for (Tile neighbor : neighbors) {
+            if (neighbor != null && neighbor.getPlayerId() != 0) {
+                isLone = false;
+                break;
+            }
+        }
+        return isLone;
+    }
+
     private int score;
     private int id;
     private int opponentId;
@@ -24,7 +36,7 @@ public class MinMaxPlayer implements AbstractPlayer {
 
     public MinMaxPlayer(final Integer pid) {
         id = pid;
-        opponentId = id == 1 ? 2 : 1;
+        opponentId = (id == 1) ? 2 : 1;
         name = "MinMaxPlayerTeam2";
 
         logger.setLevel(Level.ALL);
@@ -114,24 +126,15 @@ public class MinMaxPlayer implements AbstractPlayer {
         }
     }
 
-    ArrayList<Tile> findEmptyTiles(Board board) {
+    private ArrayList<Tile> findEmptyTiles(Board board) {
         ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
         int loneTilesCount = 0;
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.getPlayerId() == 0) {
-                    // find if tile is lone.
-                    Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(),
-                            board);
-                    boolean isLone = true;
-                    for (Tile neighbor : neighbors) {
-                        if (neighbor != null && neighbor.getPlayerId() != 0) {
-                            isLone = false;
-                            break;
-                        }
-                    }
-                    if (isLone && (++loneTilesCount > MAX_DEPTH)) {
+
+                    if (isTileLone(tile, board) && (++loneTilesCount > MAX_DEPTH)) {
                         continue;
                     }
 
