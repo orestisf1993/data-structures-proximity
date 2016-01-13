@@ -41,7 +41,7 @@ public class Node {
         if (logger == null) {
             logger = Logger.getLogger("Node");
 
-            logger.setLevel(Level.ALL);
+            logger.setLevel(MinMaxPlayer.loggerLevel);
             logger.setUseParentHandlers(false);
 
             FileHandler fh;

@@ -14,6 +14,7 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 public class MinMaxPlayer implements AbstractPlayer {
     // TODO: delete logger for final version.
     private final static Logger logger = Logger.getLogger("log");
+    final static Level loggerLevel = Level.WARNING;
     // TODO: change to depth we want to use.
     final private static int MAX_DEPTH = 2;
 
@@ -70,7 +71,8 @@ public class MinMaxPlayer implements AbstractPlayer {
         opponentId = (id == 1) ? 2 : 1;
         name = "MinMaxPlayerTeam2";
 
-        logger.setLevel(Level.ALL);
+        // logging stuff.
+        logger.setLevel(loggerLevel);
         logger.setUseParentHandlers(false);
         FileHandler fh;
         try {
@@ -79,7 +81,7 @@ public class MinMaxPlayer implements AbstractPlayer {
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
-            logger.log(Level.FINEST, "Created MinMaxPlayer");
+            logger.log(Level.FINE, "Created MinMaxPlayer");
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {
