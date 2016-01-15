@@ -61,8 +61,9 @@ public class Node {
     Board nodeBoard;
     double nodeEvaluation;
 
-    // TODO: fill
     public Node() {
+        id = opponentId = nodeDepth = -1;
+        nodeEvaluation = Double.NaN;
     }
 
     /**
