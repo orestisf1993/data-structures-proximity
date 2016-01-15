@@ -46,7 +46,7 @@ public class MinMaxPlayer implements AbstractPlayer {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.getPlayerId() == 0) {
-
+                    // TODO: use curr depth.
                     if (tileIsLone(tile, board) && (++loneTilesCount > MAX_DEPTH)) {
                         continue;
                     }
@@ -69,6 +69,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     }
 
     static boolean tileIsLone(Tile tile, Board board) {
+        // TODO: prefer corner tiles
         Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         boolean isLone = true;
         for (Tile neighbor : neighbors) {
@@ -100,13 +101,11 @@ public class MinMaxPlayer implements AbstractPlayer {
             return node.getNodeMove();
         }
 
-        boolean minimizingPlayer = node.getNodeDepth() % 2 == 1;
+        // if node is ours, it's child will not be.
+        boolean minimizingPlayer = nodeLevelIsOurs(node);
         Node bestNode = children.get(0);
         double bestValue = minimizingPlayer ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (Node child : children) {
-            // if we are minimizing then it is an enemy's node.
-            assert ((child.getId() == opponentId) == minimizingPlayer);
-
             chooseMinMaxMove(child);
             double evaluation = child.getNodeEvaluation();
             boolean isBestValue = minimizingPlayer ? evaluation < bestValue
@@ -125,12 +124,9 @@ public class MinMaxPlayer implements AbstractPlayer {
         // Find the empty tile spots of the board of the parent.
         Board board = parent.getNodeBoard();
         ArrayList<Tile> emptyTiles = findEmptyTiles(board);
-        final int depth = parent.getNodeDepth() + 1;
-        final int nodeId = depth % 2 == 1 ? id : opponentId;
-        final int s = nextNumbersToBePlayed[parent.getNodeDepth()];
-
-        logger.log(Level.FINEST, "Creating sub tree:" + "\ndepth: " + depth + "\nid: " + nodeId
-                + "\nemptyTiles: " + emptyTiles.size());
+        final int nextDepth = parent.getNodeDepth() + 1;
+        final int nodeId = nodeLevelIsOurs(nextDepth) ? id : opponentId;
+        final int s = nextNumbersToBePlayed[nextDepth - 1];
 
         for (Tile emptyTile : emptyTiles) {
             // Get needed values for Node() and boardAfterMove() call.
@@ -142,20 +138,21 @@ public class MinMaxPlayer implements AbstractPlayer {
             Board nextBoard = ProximityUtilities.boardAfterMove(nodeId, board, x, y, s);
 
             // Create the new node.
-            Node newNode = new Node(parent, depth, move, nextBoard, s);
+            Node newNode = new Node(parent, nextDepth, move, nextBoard);
 
             // Add the node as child of the parent node.
-            ArrayList<Node> children = parent.getChildren();
-            children.add(newNode);
-            parent.setChildren(children);
+            parent.addChild(newNode);
 
             // Add opponent's branches.
-            if (depth < MAX_DEPTH) {
+            if (nextDepth < MAX_DEPTH) {
                 createSubTree(newNode);
             }
         }
     }
 
+    /**
+     * @return the id
+     */
     public int getId() {
         return id;
     }
@@ -167,8 +164,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     public int[] getNextMove(final Board board, final int randomNumber) {
         nextNumbersToBePlayed = Board.getNextTenNumbersToBePlayed();
         assert (randomNumber == nextNumbersToBePlayed[0]);
-        // opponentId so depth 1 gets our id.
-        Node root = new Node(board, opponentId);
+        Node root = new Node(board, id);
         // create a tree of depth MAX_DEPTH.
         createSubTree(root);
         int[] nextMove = chooseMinMaxMove(root);
@@ -184,13 +180,16 @@ public class MinMaxPlayer implements AbstractPlayer {
         return score;
     }
 
-    public void setId(final int id) {
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(int id) {
         this.id = id;
     }
 
     public void setName(final String name) {
         this.name = name;
-
     }
 
     public void setNumOfTiles(final int tiles) {

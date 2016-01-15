@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import gr.auth.ee.dsproject.proximity.board.Board;
+import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class TestMinMaxPlayer {
 
@@ -19,6 +19,13 @@ public class TestMinMaxPlayer {
         for (Node child : root.getChildren()) {
             printTree(child);
         }
+    }
+
+    @Test
+    public void testCountEmptyNeighbors() {
+        Tile[] neighbors = new Tile[] { new Tile(0, 0, 0, 0, 0, 0), new Tile(0, 0, 0, 0, 0, 1),
+                new Tile(0, 0, 0, 0, 0, 2), null, null, new Tile(0, 0, 0, 0, 0, 0) };
+        assertEquals(2, Node.countEmptyNeighbors(neighbors));
     }
 
     @Test
@@ -43,18 +50,8 @@ public class TestMinMaxPlayer {
             }
 
             public NodeTest(Node parent, int nodeDepth, int[] nodeMove) {
-                super(null, nodeDepth, nodeMove, null, -1);
+                super(null, nodeDepth, nodeMove, null);
                 this.parent = parent;
-            }
-
-            public NodeTest(Node parent, int nodeDepth, int[] nodeMove, Board nodeBoard,
-                    int randomNumber) {
-                super(null, nodeDepth, nodeMove, nodeBoard, randomNumber);
-                this.parent = parent;
-            }
-
-            void addChild(NodeTest child) {
-                children.add(child);
             }
 
             NodeTest createChild() {
@@ -121,16 +118,5 @@ public class TestMinMaxPlayer {
         assertTrue(MinMaxPlayer.nodeLevelIsOurs(3));
         assertFalse(MinMaxPlayer.nodeLevelIsOurs(4));
         assertTrue(MinMaxPlayer.nodeLevelIsOurs(5));
-
-        Node node0 = new Node(null, 0);
-        node0.setNodeDepth(0);
-        Node node1 = new Node(null, 0);
-        node1.setNodeDepth(1);
-        Node node2 = new Node(null, 0);
-        node2.setNodeDepth(2);
-        Node node3 = new Node(null, 0);
-        node3.setNodeDepth(3);
-        Node node4 = new Node(null, 0);
-        node4.setNodeDepth(4);
     }
 }

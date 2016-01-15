@@ -2,10 +2,7 @@ package gr.auth.ee.dsproject.proximity.defplayers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -21,7 +18,6 @@ public class Node {
     static {
         if (logger == null) {
             logger = Logger.getLogger("Node");
-
             logger.setLevel(MinMaxPlayer.loggerLevel);
             logger.setUseParentHandlers(false);
 
@@ -50,85 +46,123 @@ public class Node {
      *            It is the randomNumber.
      * @return a double which represents the "safety" of the move.
      */
-    private double calculateRisk(final Tile tile, Board board) {
-        HashMap<Integer, Integer> map;
-        final int tileId = tile.getPlayerId();
-        final boolean isEmpty = (tileId == 0);
-        final double scoreTile = isEmpty ? randomNumber : tile.getScore();
-        final boolean isEnemyBigger = (tileId == opponentId && randomNumber <= scoreTile);
-        if (isEnemyBigger) {
-            map = myPool;
-        } else {
-            map = opponentsPool;
+    private static double calculateRisk(final Tile tile, Board board,
+            ArrayList<Integer> nextEnemies) {
+        final double scoreTile = tile.getScore();
+
+        double emptyNeighbors = countEmptyNeighbors(tile, board);
+        if (emptyNeighbors < 1) {
+            return 0.0;
         }
 
+        // TODO replace 10 with static.
+        for (int i = 0; i < nextEnemies.size(); i++) {
+            if (nextEnemies.get(i) > scoreTile) {
+                final double movesAfter = i + 1;
+                final double risk = (scoreTile / (movesAfter)) * Math.sqrt(emptyNeighbors);
+                return risk;
+            }
+        }
+        return 0;
+    }
+
+    static int countEmptyNeighbors(Tile tile, Board board) {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
-        double emptyNeighbors = isEmpty ? 1 : 0;
+        return countEmptyNeighbors(neighbors);
+    }
+
+    static int countEmptyNeighbors(Tile[] neighbors) {
+        int emptyNeighbors = 0;
         for (final Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() == 0) {
                 emptyNeighbors++;
             }
         }
-        assert (emptyNeighbors != 0);
+        return emptyNeighbors;
+    }
 
-        double totalValuesCount = 0;
-        double biggerValuesCount = 0;
-        // TODO: try using next 10 moves instead of map.
-        for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            final Integer tileValue = entry.getKey();
-            final Integer tileCount = entry.getValue();
-            totalValuesCount += tileCount;
-            if (tileValue > scoreTile) {
-                biggerValuesCount += tileCount;
-            }
-        }
-        if (totalValuesCount == 0) {
-            return 0;
-        }
+    Node parent;
+    ArrayList<Node> children;
+    private int id;
+    private int opponentId;
+    int nodeDepth;
+    int[] nodeMove;
+    Board nodeBoard;
+    double nodeEvaluation;
 
-        final double percentLarger = biggerValuesCount / totalValuesCount;
-        final double risk = 2 * percentLarger * (scoreTile) / (emptyNeighbors * emptyNeighbors);
-        if (isEnemyBigger) {
-            return -risk;
-        } else {
-            return risk;
+    // TODO: fill
+    public Node() {
+    }
+
+    /**
+     * @param nodeBoard
+     */
+    public Node(Board nodeBoard, int id) {
+        // constructor used for the root Node
+        this(null, 0, null, nodeBoard);
+        this.id = id;
+        this.opponentId = (id == 1) ? 2 : 1;
+    }
+
+    /**
+     * @param parent
+     * @param nodeDepth
+     * @param nodeMove
+     * @param nodeBoard
+     */
+    public Node(Node parent, int nodeDepth, int[] nodeMove, Board nodeBoard) {
+        // arguments of constructor
+        this.parent = parent;
+        this.nodeDepth = nodeDepth;
+        this.nodeMove = nodeMove;
+        this.nodeBoard = nodeBoard;
+
+        // initialize children.
+        this.children = new ArrayList<Node>();
+
+        if (parent != null) {
+            this.id = parent.getId();
+            this.opponentId = parent.getOpponentId();
         }
     }
 
-    public void evaluate() {
-        int x = nodeMove[0];
-        int y = nodeMove[1];
-        Board board = parent.getNodeBoard();
-        Tile tile = board.getTile(x, y);
-        assert (tile.getPlayerId() == 0);
+    void addChild(Node child) {
+        children.add(child);
+    }
 
-        final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
-        int scoreFromAlies = 0;
-        int scoreFromEnemies = 0;
-        double scoreFromRisk = calculateRisk(tile, board);
+    void evaluate() {
+        double theirs = 0;
+        double ours = 0;
+        for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
+            for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
+                final Tile tile = nodeBoard.getTile(i, j);
+                final int tileId = tile.getPlayerId();
+                if (tileId == 0) {
+                    continue;
+                }
+                final int tileScore = tile.getScore();
+                final boolean isOurs = (tileId == id);
+                final boolean isEnemys = (tileId == opponentId);
+                final ArrayList<Integer> nextEnemies = new ArrayList<Integer>();
+                final int[] nextTen = Board.getNextTenNumbersToBePlayed();
 
-        for (final Tile neighbor : neighbors) {
-            if (neighbor == null || neighbor.getPlayerId() == 0) {
-                continue;
+                int idxStart = nodeDepth;
+                if (idxStart % 2 == 1 && isEnemys) {
+                    idxStart++;
+                }
+                if (idxStart % 2 == 0 && isOurs) {
+                    idxStart++;
+                }
+                for (int nextTenIdx = idxStart; nextTenIdx < nextTen.length; nextTenIdx += 2) {
+                    nextEnemies.add(nextTen[nextTenIdx]);
+                }
+                final double risk = calculateRisk(tile, nodeBoard, nextEnemies);
+
+                ours += isOurs ? tileScore - risk : 0;
+                theirs += isEnemys ? tileScore - risk : 0;
             }
-            final int neighborPlayerId = neighbor.getPlayerId();
-            final int neighborScore = neighbor.getScore();
-            if (neighborPlayerId == opponentId && randomNumber > neighborScore) {
-                scoreFromEnemies += neighborScore;
-            } else if (neighborPlayerId == id && neighborScore != 20) {
-                scoreFromAlies++;
-            }
-            scoreFromRisk += calculateRisk(neighbor, board);
         }
-
-        // nodeEvaluation = scoreFromAlies + scoreFromEnemies + scoreFromRisk;
-        nodeEvaluation = scoreFromAlies + scoreFromEnemies;
-        if (nodeEvaluation > 1000) {
-            logger.log(Level.WARNING,
-                    "huge evaluation: " + scoreFromAlies + " " + scoreFromEnemies + " "
-                            + scoreFromRisk + " = " + this.nodeEvaluation + "\n at depth "
-                            + nodeDepth);
-        }
+        this.nodeEvaluation = ours - theirs;
     }
 
     /**
@@ -143,10 +177,6 @@ public class Node {
      */
     public int getId() {
         return id;
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     /**
@@ -178,34 +208,17 @@ public class Node {
     }
 
     /**
+     * @return the opponentId
+     */
+    public int getOpponentId() {
+        return opponentId;
+    }
+
+    /**
      * @return the parent
      */
     public Node getParent() {
         return parent;
-    }
-
-    /**
-     * @param children
-     *            the children to set
-     */
-    public void setChildren(ArrayList<Node> children) {
-        this.children = children;
-    }
-
-    /**
-     * @param nodeBoard
-     *            the nodeBoard to set
-     */
-    public void setNodeBoard(Board nodeBoard) {
-        this.nodeBoard = nodeBoard;
-    }
-
-    /**
-     * @param nodeDepth
-     *            the nodeDepth to set
-     */
-    public void setNodeDepth(int nodeDepth) {
-        this.nodeDepth = nodeDepth;
     }
 
     /**
@@ -214,21 +227,5 @@ public class Node {
      */
     public void setNodeEvaluation(double nodeEvaluation) {
         this.nodeEvaluation = nodeEvaluation;
-    }
-
-    /**
-     * @param nodeMove
-     *            the nodeMove to set
-     */
-    public void setNodeMove(int[] nodeMove) {
-        this.nodeMove = nodeMove;
-    }
-
-    /**
-     * @param parent
-     *            the parent to set
-     */
-    public void setParent(Node parent) {
-        this.parent = parent;
     }
 }
