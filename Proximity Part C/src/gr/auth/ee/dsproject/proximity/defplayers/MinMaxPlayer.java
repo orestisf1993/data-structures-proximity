@@ -38,9 +38,17 @@ public class MinMaxPlayer implements AbstractPlayer {
         return nodeLevelIsOurs(depth);
     }
 
-    static boolean tileIsLone(Tile tile, Board board) {
-        Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
-        for (Tile neighbor : neighbors) {
+    static int reverseId(final int id) {
+        if (id != 1 && id != 2) {
+            return id;
+        } else {
+            return (id == 1) ? 2 : 1;
+        }
+    }
+
+    static boolean tileIsLone(final Tile tile, final Board board) {
+        final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
+        for (final Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() != 0) {
                 return false;
             }
@@ -57,7 +65,7 @@ public class MinMaxPlayer implements AbstractPlayer {
 
     public MinMaxPlayer(final Integer pid) {
         id = pid;
-        opponentId = (id == 1) ? 2 : 1;
+        opponentId = reverseId(id);
         name = "MinMaxPlayerTeam2";
     }
 
@@ -149,8 +157,9 @@ public class MinMaxPlayer implements AbstractPlayer {
      * @param id
      *            the id to set
      */
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
+        this.opponentId = reverseId(id);
     }
 
     public void setName(final String name) {
