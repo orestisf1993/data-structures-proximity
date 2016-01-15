@@ -9,7 +9,6 @@ import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class MinMaxPlayer implements AbstractPlayer {
-    // TODO: change to depth we want to use.
     final private static int MAX_DEPTH = 2;
 
     private static ArrayList<Tile> findEmptyTiles(Board board, int nextDepth) {
@@ -35,7 +34,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         return depth % 2 == 1;
     }
 
-    static boolean nodeLevelIsOurs(Node node) {
+    static boolean nodeLevelIsOurs(Node77968125 node) {
         int depth = node.getNodeDepth();
         return nodeLevelIsOurs(depth);
     }
@@ -83,8 +82,8 @@ public class MinMaxPlayer implements AbstractPlayer {
         name = "MinMaxPlayerTeam2";
     }
 
-    int[] chooseMinMaxMove(Node node) {
-        ArrayList<Node> children = node.getChildren();
+    int[] chooseMinMaxMove(Node77968125 node) {
+        ArrayList<Node77968125> children = node.getChildren();
         if (children.isEmpty()) {
             node.evaluate();
             return node.getNodeMove();
@@ -92,9 +91,9 @@ public class MinMaxPlayer implements AbstractPlayer {
 
         // if node is ours, it's child will not be.
         boolean minimizingPlayer = nodeLevelIsOurs(node);
-        Node bestNode = children.get(0);
+        Node77968125 bestNode = children.get(0);
         double bestValue = minimizingPlayer ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-        for (Node child : children) {
+        for (Node77968125 child : children) {
             chooseMinMaxMove(child);
             double evaluation = child.getNodeEvaluation();
             boolean isBestValue = minimizingPlayer ? evaluation < bestValue
@@ -108,7 +107,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         return bestNode.getNodeMove();
     }
 
-    void createSubTree(final Node parent) {
+    void createSubTree(final Node77968125 parent) {
         // Find the empty tile spots of the board of the parent.
         Board board = parent.getNodeBoard();
         final int nextDepth = parent.getNodeDepth() + 1;
@@ -126,7 +125,7 @@ public class MinMaxPlayer implements AbstractPlayer {
             Board nextBoard = ProximityUtilities.boardAfterMove(nodeId, board, x, y, s);
 
             // Create the new node.
-            Node newNode = new Node(parent, nextDepth, move, nextBoard);
+            Node77968125 newNode = new Node77968125(parent, nextDepth, move, nextBoard);
 
             // Add the node as child of the parent node.
             parent.addChild(newNode);
@@ -152,7 +151,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     public int[] getNextMove(final Board board, final int randomNumber) {
         nextNumbersToBePlayed = Board.getNextTenNumbersToBePlayed();
         assert (randomNumber == nextNumbersToBePlayed[0]);
-        Node root = new Node(board, id);
+        Node77968125 root = new Node77968125(board, id);
         // create a tree of depth MAX_DEPTH.
         createSubTree(root);
         int[] nextMove = chooseMinMaxMove(root);

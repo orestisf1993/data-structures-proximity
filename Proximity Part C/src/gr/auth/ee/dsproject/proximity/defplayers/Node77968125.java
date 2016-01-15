@@ -6,8 +6,7 @@ import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
-// TODO: rename to correct class name for assignment.
-public class Node {
+public class Node77968125 {
     /**
      *
      * @param tile
@@ -52,8 +51,8 @@ public class Node {
         return emptyNeighbors;
     }
 
-    Node parent;
-    ArrayList<Node> children;
+    Node77968125 parent;
+    ArrayList<Node77968125> children;
     private int id;
     private int opponentId;
     int nodeDepth;
@@ -61,7 +60,7 @@ public class Node {
     Board nodeBoard;
     double nodeEvaluation;
 
-    public Node() {
+    public Node77968125() {
         id = opponentId = nodeDepth = -1;
         nodeEvaluation = Double.NaN;
     }
@@ -69,7 +68,7 @@ public class Node {
     /**
      * @param nodeBoard
      */
-    public Node(Board nodeBoard, int id) {
+    public Node77968125(Board nodeBoard, int id) {
         // constructor used for the root Node
         this(null, 0, null, nodeBoard);
         this.id = id;
@@ -82,7 +81,7 @@ public class Node {
      * @param nodeMove
      * @param nodeBoard
      */
-    public Node(Node parent, int nodeDepth, int[] nodeMove, Board nodeBoard) {
+    public Node77968125(Node77968125 parent, int nodeDepth, int[] nodeMove, Board nodeBoard) {
         // arguments of constructor
         this.parent = parent;
         this.nodeDepth = nodeDepth;
@@ -90,15 +89,16 @@ public class Node {
         this.nodeBoard = nodeBoard;
 
         // initialize children.
-        this.children = new ArrayList<Node>();
+        this.children = new ArrayList<Node77968125>();
 
         if (parent != null) {
+            // All nodes that are used by a player should share the same ids.
             this.id = parent.getId();
             this.opponentId = parent.getOpponentId();
         }
     }
 
-    void addChild(Node child) {
+    void addChild(Node77968125 child) {
         children.add(child);
     }
 
@@ -134,7 +134,7 @@ public class Node {
     /**
      * @return the children
      */
-    public ArrayList<Node> getChildren() {
+    public ArrayList<Node77968125> getChildren() {
         return children;
     }
 
@@ -183,7 +183,7 @@ public class Node {
     /**
      * @return the parent
      */
-    public Node getParent() {
+    public Node77968125 getParent() {
         return parent;
     }
 
