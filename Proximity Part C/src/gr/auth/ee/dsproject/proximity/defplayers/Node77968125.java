@@ -72,7 +72,7 @@ public class Node77968125 {
         // constructor used for the root Node
         this(null, 0, null, nodeBoard);
         this.id = id;
-        this.opponentId = (id == 1) ? 2 : 1;
+        this.opponentId = MinMaxPlayer.reverseId(id);
     }
 
     /**
