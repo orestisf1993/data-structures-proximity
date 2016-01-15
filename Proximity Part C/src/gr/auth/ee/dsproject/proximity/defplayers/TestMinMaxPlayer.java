@@ -10,20 +10,20 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class TestMinMaxPlayer {
 
-    private void printTree(Node77968125 root) {
+    private void printTree(final Node77968125 root) {
         for (int i = 0; i < root.nodeDepth; i++) {
             System.out.print("-");
         }
         System.out.print(">");
         System.out.println(" (" + root.getNodeEvaluation() + ")");
-        for (Node77968125 child : root.getChildren()) {
+        for (final Node77968125 child : root.getChildren()) {
             printTree(child);
         }
     }
 
     @Test
     public void testCountEmptyNeighbors() {
-        Tile[] neighbors = new Tile[] { new Tile(0, 0, 0, 0, 0, 0), new Tile(0, 0, 0, 0, 0, 1),
+        final Tile[] neighbors = new Tile[] { new Tile(0, 0, 0, 0, 0, 0), new Tile(0, 0, 0, 0, 0, 1),
                 new Tile(0, 0, 0, 0, 0, 2), null, null, new Tile(0, 0, 0, 0, 0, 0) };
         assertEquals(2, Node77968125.countEmptyNeighbors(neighbors));
     }
@@ -33,11 +33,12 @@ public class TestMinMaxPlayer {
         int a = 0;
 
         @SuppressWarnings("unused")
+        final
         boolean f1 = (false && ++a > 0);
         assertEquals(false, f1);
         assertEquals(0, a);
 
-        boolean f2 = (true && ++a > 0);
+        final boolean f2 = (true && ++a > 0);
         assertEquals(true, f2);
         assertEquals(1, a);
     }
@@ -49,7 +50,7 @@ public class TestMinMaxPlayer {
                 super(null, 0);
             }
 
-            public NodeTest(Node77968125 parent, int nodeDepth, int[] nodeMove) {
+            public NodeTest(final Node77968125 parent, final int nodeDepth, final int[] nodeMove) {
                 super(null, nodeDepth, nodeMove, null);
                 this.parent = parent;
             }
@@ -58,8 +59,8 @@ public class TestMinMaxPlayer {
                 return createChild(0.0);
             }
 
-            NodeTest createChild(double eval) {
-                NodeTest node = new NodeTest(this, nodeDepth + 1, null);
+            NodeTest createChild(final double eval) {
+                final NodeTest node = new NodeTest(this, nodeDepth + 1, null);
                 node.setNodeEvaluation(eval);
                 addChild(node);
                 return node;
@@ -75,9 +76,9 @@ public class TestMinMaxPlayer {
         final int[] bestMove = new int[] { 0, 0 };
 
         // max
-        NodeTest root = new NodeTest();
+        final NodeTest root = new NodeTest();
         NodeTest child = root.createChild();
-        NodeTest bestChild = new NodeTest(root, 1, bestMove);
+        final NodeTest bestChild = new NodeTest(root, 1, bestMove);
         root.addChild(bestChild);
 
         // min and then max
@@ -100,7 +101,7 @@ public class TestMinMaxPlayer {
 
         assertEquals(0, root.getNodeEvaluation(), epsilon);
 
-        int[] result = new MinMaxPlayer(1).chooseMinMaxMove(root);
+        final int[] result = new MinMaxPlayer(1).chooseMinMaxMove(root);
 
         // print the tree after MiniMax
         System.out.println();
