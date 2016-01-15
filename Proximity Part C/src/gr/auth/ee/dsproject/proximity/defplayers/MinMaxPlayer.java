@@ -1,7 +1,5 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
@@ -12,6 +10,7 @@ public class MinMaxPlayer implements AbstractPlayer {
     final private static int MAX_DEPTH = 2;
 
     private static ArrayList<Tile> findEmptyTiles(Board board, int nextDepth) {
+        // TODO: prefer corner tiles
         ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
         int loneTilesCount = 0;
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
@@ -39,25 +38,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         return nodeLevelIsOurs(depth);
     }
 
-    static String printBoardToString(Board board) {
-        // Create a stream to hold the output
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        // IMPORTANT: Save the old System.out!
-        PrintStream old = System.out;
-        // Tell Java to use your special stream
-        System.setOut(ps);
-        // Print some output: goes to your special stream
-        board.printBoard();
-        // Put things back
-        System.out.flush();
-        System.setOut(old);
-        // return what happened
-        return baos.toString();
-    }
-
     static boolean tileIsLone(Tile tile, Board board) {
-        // TODO: prefer corner tiles
         Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         boolean isLone = true;
         for (Tile neighbor : neighbors) {
