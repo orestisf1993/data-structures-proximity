@@ -1,6 +1,8 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -66,6 +68,23 @@ public class MinMaxPlayer implements AbstractPlayer {
     static boolean nodeLevelIsOurs(Node node) {
         int depth = node.getNodeDepth();
         return nodeLevelIsOurs(depth);
+    }
+
+    static String printBoardToString(Board board) {
+        // Create a stream to hold the output
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        // IMPORTANT: Save the old System.out!
+        PrintStream old = System.out;
+        // Tell Java to use your special stream
+        System.setOut(ps);
+        // Print some output: goes to your special stream
+        board.printBoard();
+        // Put things back
+        System.out.flush();
+        System.setOut(old);
+        // return what happened
+        return baos.toString();
     }
 
     static boolean tileIsLone(Tile tile, Board board) {
