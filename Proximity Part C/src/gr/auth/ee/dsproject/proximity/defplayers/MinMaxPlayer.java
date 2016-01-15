@@ -40,14 +40,12 @@ public class MinMaxPlayer implements AbstractPlayer {
 
     static boolean tileIsLone(Tile tile, Board board) {
         Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
-        boolean isLone = true;
         for (Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() != 0) {
-                isLone = false;
-                break;
+                return false;
             }
         }
-        return isLone;
+        return true;
     }
 
     private int score;
