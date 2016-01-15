@@ -41,15 +41,14 @@ public class MinMaxPlayer implements AbstractPlayer {
     // TODO: change to depth we want to use.
     final private static int MAX_DEPTH = 2;
 
-    private static ArrayList<Tile> findEmptyTiles(Board board) {
+    private static ArrayList<Tile> findEmptyTiles(Board board, int nextDepth) {
         ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
         int loneTilesCount = 0;
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.getPlayerId() == 0) {
-                    // TODO: use curr depth.
-                    if (tileIsLone(tile, board) && (++loneTilesCount > MAX_DEPTH)) {
+                    if (tileIsLone(tile, board) && (++loneTilesCount > MAX_DEPTH + 1 - nextDepth)) {
                         continue;
                     }
 
@@ -142,10 +141,10 @@ public class MinMaxPlayer implements AbstractPlayer {
     void createSubTree(final Node parent) {
         // Find the empty tile spots of the board of the parent.
         Board board = parent.getNodeBoard();
-        ArrayList<Tile> emptyTiles = findEmptyTiles(board);
         final int nextDepth = parent.getNodeDepth() + 1;
         final int nodeId = nodeLevelIsOurs(nextDepth) ? id : opponentId;
         final int s = nextNumbersToBePlayed[nextDepth - 1];
+        ArrayList<Tile> emptyTiles = findEmptyTiles(board, nextDepth);
 
         for (Tile emptyTile : emptyTiles) {
             // Get needed values for Node() and boardAfterMove() call.
