@@ -1,43 +1,14 @@
 package gr.auth.ee.dsproject.proximity.defplayers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import gr.auth.ee.dsproject.proximity.board.Board;
 import gr.auth.ee.dsproject.proximity.board.ProximityUtilities;
 import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class MinMaxPlayer implements AbstractPlayer {
-    // TODO: delete logger for final version.
-    // final static Level loggerLevel = Level.ALL;
-    final static Level loggerLevel = Level.OFF;
-    private final static Logger logger = Logger.getLogger("log");
-
-    // static initializer for logger
-    static {
-        logger.setLevel(loggerLevel);
-        logger.setUseParentHandlers(false);
-        FileHandler fh;
-        try {
-            // This block configure the logger with handler and formatter
-            fh = new FileHandler("log.log");
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-            logger.log(Level.FINE, "Created MinMaxPlayer");
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     // TODO: change to depth we want to use.
     final private static int MAX_DEPTH = 2;
 
@@ -128,7 +99,6 @@ public class MinMaxPlayer implements AbstractPlayer {
             double evaluation = child.getNodeEvaluation();
             boolean isBestValue = minimizingPlayer ? evaluation < bestValue
                     : evaluation > bestValue;
-            logger.log(Level.FINEST, evaluation + ":" + isBestValue + " at " + node.getNodeDepth());
             if (isBestValue) {
                 bestNode = child;
                 bestValue = evaluation;
@@ -186,7 +156,6 @@ public class MinMaxPlayer implements AbstractPlayer {
         // create a tree of depth MAX_DEPTH.
         createSubTree(root);
         int[] nextMove = chooseMinMaxMove(root);
-        logger.log(Level.INFO, nextMove[0] + "," + nextMove[1]);
         return nextMove;
     }
 
