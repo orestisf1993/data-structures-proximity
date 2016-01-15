@@ -17,11 +17,11 @@ public class Node77968125 {
      *            It is the randomNumber.
      * @return a double which represents the "safety" of the move.
      */
-    private static double calculateRisk(final Tile tile, Board board,
-            ArrayList<Integer> nextEnemies) {
+    private static double calculateRisk(final Tile tile, final Board board,
+            final ArrayList<Integer> nextEnemies) {
         final double scoreTile = tile.getScore();
 
-        double emptyNeighbors = countEmptyNeighbors(tile, board);
+        final double emptyNeighbors = countEmptyNeighbors(tile, board);
         if (emptyNeighbors < 1) {
             return 0.0;
         }
@@ -36,12 +36,12 @@ public class Node77968125 {
         return 0;
     }
 
-    static int countEmptyNeighbors(Tile tile, Board board) {
+    static int countEmptyNeighbors(final Tile tile, final Board board) {
         final Tile[] neighbors = ProximityUtilities.getNeighbors(tile.getX(), tile.getY(), board);
         return countEmptyNeighbors(neighbors);
     }
 
-    static int countEmptyNeighbors(Tile[] neighbors) {
+    static int countEmptyNeighbors(final Tile[] neighbors) {
         int emptyNeighbors = 0;
         for (final Tile neighbor : neighbors) {
             if (neighbor != null && neighbor.getPlayerId() == 0) {
@@ -68,7 +68,7 @@ public class Node77968125 {
     /**
      * @param nodeBoard
      */
-    public Node77968125(Board nodeBoard, int id) {
+    public Node77968125(final Board nodeBoard, final int id) {
         // constructor used for the root Node
         this(null, 0, null, nodeBoard);
         this.id = id;
@@ -81,7 +81,8 @@ public class Node77968125 {
      * @param nodeMove
      * @param nodeBoard
      */
-    public Node77968125(Node77968125 parent, int nodeDepth, int[] nodeMove, Board nodeBoard) {
+    public Node77968125(final Node77968125 parent, final int nodeDepth, final int[] nodeMove,
+            final Board nodeBoard) {
         // arguments of constructor
         this.parent = parent;
         this.nodeDepth = nodeDepth;
@@ -98,7 +99,7 @@ public class Node77968125 {
         }
     }
 
-    void addChild(Node77968125 child) {
+    void addChild(final Node77968125 child) {
         children.add(child);
     }
 
@@ -191,7 +192,7 @@ public class Node77968125 {
      * @param nodeEvaluation
      *            the nodeEvaluation to set
      */
-    public void setNodeEvaluation(double nodeEvaluation) {
+    public void setNodeEvaluation(final double nodeEvaluation) {
         this.nodeEvaluation = nodeEvaluation;
     }
 }
