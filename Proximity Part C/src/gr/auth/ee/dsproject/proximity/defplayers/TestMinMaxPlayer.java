@@ -10,13 +10,13 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class TestMinMaxPlayer {
 
-    private void printTree(Node root) {
+    private void printTree(Node77968125 root) {
         for (int i = 0; i < root.nodeDepth; i++) {
             System.out.print("-");
         }
         System.out.print(">");
         System.out.println(" (" + root.getNodeEvaluation() + ")");
-        for (Node child : root.getChildren()) {
+        for (Node77968125 child : root.getChildren()) {
             printTree(child);
         }
     }
@@ -25,7 +25,7 @@ public class TestMinMaxPlayer {
     public void testCountEmptyNeighbors() {
         Tile[] neighbors = new Tile[] { new Tile(0, 0, 0, 0, 0, 0), new Tile(0, 0, 0, 0, 0, 1),
                 new Tile(0, 0, 0, 0, 0, 2), null, null, new Tile(0, 0, 0, 0, 0, 0) };
-        assertEquals(2, Node.countEmptyNeighbors(neighbors));
+        assertEquals(2, Node77968125.countEmptyNeighbors(neighbors));
     }
 
     @Test
@@ -44,12 +44,12 @@ public class TestMinMaxPlayer {
 
     @Test
     public void testMiniMax() {
-        class NodeTest extends Node {
+        class NodeTest extends Node77968125 {
             public NodeTest() {
                 super(null, 0);
             }
 
-            public NodeTest(Node parent, int nodeDepth, int[] nodeMove) {
+            public NodeTest(Node77968125 parent, int nodeDepth, int[] nodeMove) {
                 super(null, nodeDepth, nodeMove, null);
                 this.parent = parent;
             }
