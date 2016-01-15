@@ -16,28 +16,9 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 // TODO: rename to correct class name for assignment.
 public class Node {
     private static Logger logger;
-    Node parent;
 
-    ArrayList<Node> children;
-    private int id;
-    private int opponentId;
-    private int randomNumber;
-    int nodeDepth;
-    int[] nodeMove;
-    Board nodeBoard;
-    double nodeEvaluation;
-    private HashMap<Integer, Integer> myPool;
-    private HashMap<Integer, Integer> opponentsPool;
-
-    /**
-     * @param nodeBoard
-     */
-    public Node(Board nodeBoard, int id) {
-        // constructor used for the root Node
-        this(null, 0, null, nodeBoard, -1);
-        this.id = id;
-        this.opponentId = id == 1 ? 2 : 1;
-
+    // static initializer for logger
+    static {
         if (logger == null) {
             logger = Logger.getLogger("Node");
 
@@ -51,41 +32,11 @@ public class Node {
                 logger.addHandler(fh);
                 SimpleFormatter formatter = new SimpleFormatter();
                 fh.setFormatter(formatter);
-                logger.log(Level.FINEST, "Created Node");
             } catch (SecurityException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * @param parent
-     * @param nodeDepth
-     * @param nodeMove
-     * @param nodeBoard
-     */
-    public Node(Node parent, int nodeDepth, int[] nodeMove, Board nodeBoard, int randomNumber) {
-        this.randomNumber = randomNumber;
-        this.parent = parent;
-        this.nodeDepth = nodeDepth;
-        this.nodeMove = nodeMove;
-        this.nodeBoard = nodeBoard;
-        this.children = new ArrayList<Node>();
-
-        if (parent != null) {
-            this.opponentId = parent.getId();
-            this.id = (this.opponentId == 1) ? 2 : 1;
-            Board parentBoard = parent.getNodeBoard();
-            if (nodeDepth % 2 == 1) {
-                this.myPool = parentBoard.getMyPool();
-                this.opponentsPool = parentBoard.getOpponentsPool();
-            } else {
-                this.opponentsPool = parentBoard.getMyPool();
-                this.myPool = parentBoard.getOpponentsPool();
-            }
-            logger = parent.getLogger();
         }
     }
 

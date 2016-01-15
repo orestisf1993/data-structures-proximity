@@ -13,8 +13,29 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class MinMaxPlayer implements AbstractPlayer {
     // TODO: delete logger for final version.
+    // final static Level loggerLevel = Level.ALL;
+    final static Level loggerLevel = Level.OFF;
     private final static Logger logger = Logger.getLogger("log");
-    final static Level loggerLevel = Level.WARNING;
+
+    // static initializer for logger
+    static {
+        logger.setLevel(loggerLevel);
+        logger.setUseParentHandlers(false);
+        FileHandler fh;
+        try {
+            // This block configure the logger with handler and formatter
+            fh = new FileHandler("log.log");
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.log(Level.FINE, "Created MinMaxPlayer");
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // TODO: change to depth we want to use.
     final private static int MAX_DEPTH = 2;
 
@@ -70,23 +91,6 @@ public class MinMaxPlayer implements AbstractPlayer {
         id = pid;
         opponentId = (id == 1) ? 2 : 1;
         name = "MinMaxPlayerTeam2";
-
-        // logging stuff.
-        logger.setLevel(loggerLevel);
-        logger.setUseParentHandlers(false);
-        FileHandler fh;
-        try {
-            // This block configure the logger with handler and formatter
-            fh = new FileHandler("log.log");
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-            logger.log(Level.FINE, "Created MinMaxPlayer");
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     int[] chooseMinMaxMove(Node node) {
