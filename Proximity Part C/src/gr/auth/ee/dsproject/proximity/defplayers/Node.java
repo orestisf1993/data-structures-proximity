@@ -27,7 +27,6 @@ public class Node {
             return 0.0;
         }
 
-        // TODO replace 10 with static.
         for (int i = 0; i < nextEnemies.size(); i++) {
             if (nextEnemies.get(i) > scoreTile) {
                 final double movesAfter = i + 1;
@@ -103,8 +102,7 @@ public class Node {
     }
 
     void evaluate() {
-        double theirs = 0;
-        double ours = 0;
+        nodeEvaluation = 0;
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
                 final Tile tile = nodeBoard.getTile(i, j);
@@ -119,10 +117,7 @@ public class Node {
                 final int[] nextTen = Board.getNextTenNumbersToBePlayed();
 
                 int idxStart = nodeDepth;
-                if (idxStart % 2 == 1 && isEnemys) {
-                    idxStart++;
-                }
-                if (idxStart % 2 == 0 && isOurs) {
+                if ((idxStart % 2 == 1 && isEnemys) || (idxStart % 2 == 0 && isOurs)) {
                     idxStart++;
                 }
                 for (int nextTenIdx = idxStart; nextTenIdx < nextTen.length; nextTenIdx += 2) {
@@ -130,11 +125,9 @@ public class Node {
                 }
                 final double risk = calculateRisk(tile, nodeBoard, nextEnemies);
 
-                ours += isOurs ? tileScore - risk : 0;
-                theirs += isEnemys ? tileScore - risk : 0;
+                nodeEvaluation += (tileScore - risk) * (isOurs ? 1 : -1);
             }
         }
-        this.nodeEvaluation = ours - theirs;
     }
 
     /**
