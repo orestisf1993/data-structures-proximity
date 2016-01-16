@@ -37,3 +37,54 @@ return emptyTiles;
 \end{lstlisting}
 \end{itemize}
 
+\section{Συνάρτηση \texttt{createSubTree()}}
+\begin{lstlisting}[style=declaration]
+void createSubTree(final Node77968125 parent)
+\end{lstlisting}
+Η συνάρτηση αυτή δημιουργεί ένα υποδέντρο με συνολικό βάθος \lstinline!MAX_DEPTH!.
+Δέχεται ως όρισμα τον κόμβο \lstinline!parent! πού είναι ο κόμβος κάτω από τον οποίο αρχίζει το δέντρο.
+
+Η δημιουργία του υποδέντρου γίνεται ως εξής:
+\begin{itemize}
+\item Βρίσκουμε τα ελεύθερα πλακίδια μέσω της \hyperref[fun:findEmptyTiles]{\lstinline!findEmptyTiles()!}.
+Αυτά τα πλακίδια θα γίνουν τα παιδιά του \lstinline!parent!.
+\begin{lstlisting}[style=chunk]
+final Board board = parent.getNodeBoard();
+final int nextDepth = parent.getNodeDepth() + 1;
+final int nodeId = nodeLevelIsOurs(nextDepth) ? id : opponentId;
+final int s = nextNumbersToBePlayed[nextDepth - 1];
+final ArrayList<Tile> emptyTiles = findEmptyTiles(board, nextDepth);
+\end{lstlisting}
+
+\item Αρχίζουμε μία επανάληψη για κάθε πλακίδιο στη λίστα
+\begin{lstlisting}[style=chunk]
+for (final Tile emptyTile : emptyTiles){
+\end{lstlisting}
+
+\item Βρίσκουμε το επόμενο \lstinline!board! μέσω της \lstinline!ProximityUtilities.boardAfterMove()!.
+\begin{lstlisting}[style=chunk]
+final int x = emptyTile.getX();
+final int y = emptyTile.getY();
+final int[] move = new int[] { x, y };
+
+// Simulate putting a tile on this spot on the parent node board.
+final Board nextBoard = ProximityUtilities.boardAfterMove(nodeId, board, x, y, s);
+\end{lstlisting}
+
+\item Δημιουργούμε ένα νέο κόμβο στο δέντρο και τον περνάμε σαν παιδί του \lstinline!parent!.
+\begin{lstlisting}[style=chunk]
+// Create the new node.
+final Node77968125 newNode = new Node77968125(parent, nextDepth, move, nextBoard);
+
+// Add the node as child of the parent node.
+parent.addChild(newNode);
+\end{lstlisting}
+
+\item Άμα δεν έχουμε ξεπεράσει το \lstinline!MAX_DEPTH! καλούμε την \lstinline!createSubTree()! αναδρομικά με νέο πατέρα-κόμβο τον κόμβο που μόλις δημιουργήσαμε.
+\begin{lstlisting}[style=chunk]
+// Add opponent's branches.
+if (nextDepth < MAX_DEPTH) {
+    createSubTree(newNode);
+}
+\end{lstlisting}
+\end{itemize}
