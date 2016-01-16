@@ -8,7 +8,7 @@
 % https://foss.ntua.gr/wiki/index.php/%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%B1_%CF%83%CF%84%CE%BF_TeX/LaTeX_%CE%BC%CE%B5_%CF%84%CE%BF_XeTeX#.CE.97yphenation
 % title in pic:
 \usepackage{titlepic}
-\usepackage[textwidth=15cm]{geometry}
+\usepackage[a4paper, margin=1in]{geometry}
 \usepackage{subfig}
 
 % Select alternative section titles
@@ -102,7 +102,7 @@
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
   language=Java,                   % the language of the code
-  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
   numbersep=5pt,                   % how far the line-numbers are from the code
   numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
   rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
@@ -112,5 +112,11 @@
   stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
   tabsize=4,                       % sets default tabsize to 2 spaces
-  title=\lstname{}                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
+
+\usepackage{fancyvrb}
+
+\setcounter{tocdepth}{3} % subsub has numbers
+\setcounter{secnumdepth}{3} % subsub in toc
+\usepackage{float}
