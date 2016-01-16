@@ -1,1 +1,39 @@
-\chapter{Υλοποίηση Του Αλγορίθμου}
+\chapter{Υλοποίηση Των Συναρτήσεων}
+\section{Συνάρτηση \texttt{findEmptyTiles()}}\label{fun:findEmptyTiles}
+\begin{lstlisting}[title={Declaration της συνάρτησης}]
+private static ArrayList<Tile> findEmptyTiles(final Board board, final int nextDepth)
+\end{lstlisting}
+Δέχεται το \lstinline!board! και το βάθος \lstinline!nextDepth! του υποδέντρου που δημιουργείται και επιστρέφει ένα
+\lstinline!ArrayList<Tile>! με τα ελεύθερα πλακίδια στο \lstinline!board! απορρίπτοντας τα πολλαπλά "μοναχικά" πλακίδια.
+
+Η δομή της συνάρτησης είναι η εξής:
+\begin{itemize}
+\item Δημιουργούμε μία λίστα για να φορτώνουμε τα πλακίδια που θα επιστρέψουμε.
+\begin{lstlisting}[style=chunk]
+final int loneTilesLimit = MAX_DEPTH + 1 - nextDepth;
+\end{lstlisting}
+
+\item Πραγματοποιούμε μια επανάληψη πάνω σε κάθε πλακίδιο του \lstinline!board!.
+\begin{lstlisting}[style=chunk]
+for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
+    for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
+        final Tile tile = board.getTile(i, j);
+\end{lstlisting}
+
+\item Για να συμπεριλάβουμε ένα \lstinline!tile! θα πρέπει να είναι κενό
+(\lstinline!tile.getPlayerId() == 0!)
+και να μην έχουμε ήδη συμπεριλάβει αρκετά "μοναχικά" πλακίδια.
+Ένα πλακίδιο το θεωρούμε "μοναχικό" αν όλοι οι γείτονες του είναι κενοί.
+Αυτό γίνεται με την συνάρτηση \lstinline!tileIsLone()!.
+Στο συνολικό δέντρο θέλουμε να έχουμε \lstinline!MAX_DEPTH! "μοναχικά" πλακίδια έτσι το όριο μέσα στη συνάρτηση είναι:
+\lstinline!final int loneTilesLimit = MAX_DEPTH + 1 - nextDepth;!
+Με αυτή την επιλογή μειώνουμε σημαντικά τον αριθμό των πλακιδίων για τον οποίο δημιουργούμε το δέντρο μας,
+βελτιώνοντας σημαντικά τον χρόνο απόφασης για κάθε κίνηση.
+Η ποιότητα της κίνηση δεν μειώνεται γιατί το evaluation μεταξύ των μοναχικών πλακιδίων είναι γενικά ισάξιο.
+
+\item Επιστρέφουμε την λίστα.
+\begin{lstlisting}[style=chunk]
+return emptyTiles;
+\end{lstlisting}
+\end{itemize}
+
