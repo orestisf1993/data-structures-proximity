@@ -31,11 +31,12 @@ public class MinMaxPlayer implements AbstractPlayer {
         // TODO: prefer corner tiles
         final ArrayList<Tile> emptyTiles = new ArrayList<Tile>();
         int loneTilesCount = 0;
+        final int loneTilesLimit = MAX_DEPTH + 1 - nextDepth;
         for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
             for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
                 final Tile tile = board.getTile(i, j);
                 if (tile.getPlayerId() == 0) {
-                    if (tileIsLone(tile, board) && (++loneTilesCount > MAX_DEPTH + 1 - nextDepth)) {
+                    if (tileIsLone(tile, board) && (++loneTilesCount > loneTilesLimit)) {
                         continue;
                     }
 
