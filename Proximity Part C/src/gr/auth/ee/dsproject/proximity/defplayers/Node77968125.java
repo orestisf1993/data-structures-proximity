@@ -178,22 +178,18 @@ public class Node77968125 {
                 if (tileId == 0) {
                     continue;
                 }
-                final int tileScore = tile.getScore();
-                final boolean isOurs = (tileId == id);
-                final boolean isEnemys = (tileId == opponentId);
-                final ArrayList<Integer> nextEnemies = new ArrayList<Integer>();
-                final int[] nextTen = Board.getNextTenNumbersToBePlayed();
+                final boolean tileIsOurs = (tileId == id);
+                int idxStart = nodeDepth
+                        + (MinMaxPlayer.nodeLevelIsOurs(nodeDepth) != tileIsOurs ? 1 : 0);
 
-                int idxStart = nodeDepth;
-                if ((idxStart % 2 == 1 && isEnemys) || (idxStart % 2 == 0 && isOurs)) {
-                    idxStart++;
-                }
+                final int[] nextTen = Board.getNextTenNumbersToBePlayed();
+                final ArrayList<Integer> nextEnemies = new ArrayList<Integer>();
                 for (int nextTenIdx = idxStart; nextTenIdx < nextTen.length; nextTenIdx += 2) {
                     nextEnemies.add(nextTen[nextTenIdx]);
                 }
                 final double risk = calculateRisk(tile, nodeBoard, nextEnemies);
 
-                nodeEvaluation += (tileScore - risk) * (isOurs ? 1 : -1);
+                nodeEvaluation += (tile.getScore() - risk) * (tileIsOurs ? 1 : -1);
             }
         }
     }

@@ -10,6 +10,22 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
 
 public class TestMinMaxPlayer {
 
+    int newIdxStart(int nodeDepth, int tileId) {
+        final boolean isOurs = (tileId == 1);
+        return nodeDepth + (MinMaxPlayer.nodeLevelIsOurs(nodeDepth) != isOurs ? 1 : 0);
+    }
+
+    int oldIdxStart(int nodeDepth, int tileId) {
+        final boolean isOurs = (tileId == 1);
+        final boolean isEnemys = (tileId == 2);
+
+        int idxStart = nodeDepth;
+        if ((idxStart % 2 == 1 && isEnemys) || (idxStart % 2 == 0 && isOurs)) {
+            idxStart++;
+        }
+        return idxStart;
+    }
+
     private void printTree(final Node77968125 root) {
         for (int i = 0; i < root.nodeDepth; i++) {
             System.out.print("-");
@@ -22,9 +38,18 @@ public class TestMinMaxPlayer {
     }
 
     @Test
+    public void testBoolean() {
+        for (int i = 1; i < 99; i++) {
+            assertEquals(oldIdxStart(i, 1), newIdxStart(i, 1));
+            assertEquals(oldIdxStart(i, 2), newIdxStart(i, 2));
+        }
+    }
+
+    @Test
     public void testCountEmptyNeighbors() {
-        final Tile[] neighbors = new Tile[] { new Tile(0, 0, 0, 0, 0, 0), new Tile(0, 0, 0, 0, 0, 1),
-                new Tile(0, 0, 0, 0, 0, 2), null, null, new Tile(0, 0, 0, 0, 0, 0) };
+        final Tile[] neighbors = new Tile[] { new Tile(0, 0, 0, 0, 0, 0),
+                new Tile(0, 0, 0, 0, 0, 1), new Tile(0, 0, 0, 0, 0, 2), null, null,
+                new Tile(0, 0, 0, 0, 0, 0) };
         assertEquals(2, Node77968125.countEmptyNeighbors(neighbors));
     }
 
@@ -33,8 +58,7 @@ public class TestMinMaxPlayer {
         int a = 0;
 
         @SuppressWarnings("unused")
-        final
-        boolean f1 = (false && ++a > 0);
+        final boolean f1 = (false && ++a > 0);
         assertEquals(false, f1);
         assertEquals(0, a);
 
