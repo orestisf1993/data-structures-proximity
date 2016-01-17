@@ -237,8 +237,7 @@ public class MinMaxPlayer implements AbstractPlayer {
         final Node77968125 root = new Node77968125(board, id);
         // create a tree of depth MAX_DEPTH.
         createSubTree(root);
-        final int[] nextMove = chooseMinMaxMove(root);
-        return nextMove;
+        return chooseMinMaxMove(root);
     }
 
     /**
