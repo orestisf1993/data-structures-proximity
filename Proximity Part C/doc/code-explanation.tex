@@ -1,5 +1,5 @@
 \chapter{Υλοποίηση Των Συναρτήσεων}
-\secion{Κλάση \texttt{MinMaxPlayer}}
+\section{Κλάση \texttt{MinMaxPlayer}}
 \subsection{Συνάρτηση \texttt{findEmptyTiles()}}\label{fun:findEmptyTiles}
 \begin{lstlisting}[title={Declaration της συνάρτησης}]
 private static ArrayList<Tile> findEmptyTiles(final Board board, final int nextDepth)
@@ -90,6 +90,9 @@ if (nextDepth < MAX_DEPTH) {
 \end{lstlisting}
 \end{itemize}
 
+\subsection{Συνάρτηση \texttt{chooseMinMaxMove()}}
+%TODO: by janna
+
 \subsection{Συνάρτηση \texttt{getNextMove()}}
 \begin{lstlisting}[style=declaration]
 public int[] getNextMove(final Board board, final int randomNumber)
@@ -122,3 +125,81 @@ return chooseMinMaxMove(root);
 \end{lstlisting}
 \end{itemize}
 
+\section{Κλάση \texttt{Node77968125}}
+\subsection{Συνάρτηση \texttt{evaluate()}}
+\begin{lstlisting}[style=declaration]
+void evaluate()
+\end{lstlisting}
+Πρόκειται για την συνάρτηση που αξιολογεί το ταμπλό ενός κόμβου, \lstinline!nodeBoard!.
+
+Η συνάρτηση αξιολόγησης άλλαξε αρκετά σε σχέση με την προηγούμενη εργασία.
+Η παλιά συνάρτηση αξιολογούσε μια κίνηση, δηλαδή την αλλαγή στο ταμπλό.
+Έτσι, σε ένα δέντρο με βάθος 2 και πάνω αξιολογώντας τους τερματικούς κόμβους δεν θα περιλαμβάναμε τις αλλαγές που έγιναν στους κόμβους βάθους 1.
+Για αυτό το λόγω τροποποιήσαμε την συνάρτηση ώστε να αξιολογείται ολόκληρο το ταμπλό στην τρέχουσα κατάσταση.
+
+Η δομή της συνάρτησης είναι ως εξής:
+\begin{itemize}
+\item Η αξιολόγηση γίνεται πάνω σε κάθε μη-κενό πλακίδιο του ταμπλό.
+\begin{lstlisting}[style=chunk]
+for (int i = 0; i < ProximityUtilities.NUMBER_OF_COLUMNS; i++) {
+    for (int j = 0; j < ProximityUtilities.NUMBER_OF_ROWS; j++) {
+        final Tile tile = nodeBoard.getTile(i, j);
+        final int tileId = tile.getPlayerId();
+        if (tileId == 0) {
+            continue;
+        }
+\end{lstlisting}
+
+\item \label{item:nextEnemies} \sloppy
+Υπολογίζουμε για κάθε πλακίδιο τους επόμενους εχθρούς του από τις κινήσεις που θα παιχτούν.
+Στον πίνακα \lstinline!nextTen! που παίρνουμε μέσω της \lstinline!Board.getNextTenNumbersToBePlayed()!
+τα στοιχεία \lstinline!0,2,4,...! είναι δικά μας ενώ τα \lstinline!1,3,5,...! είναι του αντιπάλου.
+Σε έναν κόμβο βάθους \lstinline!nodeDepth!:
+\begin{itemize}
+\item Το πλακίδιο που τοποθετεί ο κόμβος είναι το
+\lstinline!nextTen[nodeDepth - 1]!.
+
+\item Το πλακίδιο που θα τοποθετηθεί αμέσως μετά από τον άλλο παίκτη είναι το
+\lstinline!nextTen[nodeDepth]!.
+
+\item Το πλακίδιο που θα τοποθετηθεί μετά από τον πρώτο παίκτη είναι
+\lstinline!nextTen[nodeDepth + 1]!.
+\end{itemize}
+
+Άμα ο παίκτης που θα παίξει το \lstinline!nextTen[nodeDepth]! είναι ίδιος με αυτόν που έχει το \lstinline!tile! τότε
+τα επόμενα εχθρικά νούμερα στον \lstinline!nextTen! είναι τα:
+\begin{center}
+\lstinline!nextTen[nodeDepth + 1]!, \lstinline!nextTen[nodeDepth + 3]!, ...
+\end{center}
+Αλλιώς, είναι τα:
+\begin{center}
+\lstinline!nextTen[nodeDepth]!, \lstinline!nextTen[nodeDepth + 2]!, ...
+\end{center}
+Με αυτά γεμίζουμε τη \lstinline!ArrayList<Integer> nextEnemies!.
+\begin{lstlisting}[style=chunk]
+final boolean tileIsOurs = (tileId == id);
+int idxStart = nodeDepth
+        + (MinMaxPlayer.nodeLevelIsOurs(nodeDepth) != tileIsOurs ? 1 : 0);
+
+final int[] nextTen = Board.getNextTenNumbersToBePlayed();
+final ArrayList<Integer> nextEnemies = new ArrayList<Integer>();
+for (int nextTenIdx = idxStart; nextTenIdx < nextTen.length; nextTenIdx += 2) {
+    nextEnemies.add(nextTen[nextTenIdx]);
+}
+\end{lstlisting}
+
+\item Καλούμε την
+\hyperref[fun:calculateRisk]{\lstinline!calculateRisk()!}
+για να υπολογίσουμε την "ασφάλεια" του \lstinline!tile!.
+\begin{lstlisting}[style=chunk]
+final double risk = calculateRisk(tile, nodeBoard, nextEnemies);
+\end{lstlisting}
+
+\item Προσθέτουμε στο \lstinline!nodeEvaluation! τη διαφορά του score του \lstinline!tile! με το \lstinline!risk!.
+Τα πλακίδια του αντιπάλου προστίθενται με αντίθετο πρόσημο από τα δικά μας.
+\begin{lstlisting}[style=chunk]
+nodeEvaluation += (tile.getScore() - risk) * (tileIsOurs ? 1 : -1);
+\end{lstlisting}
+\end{itemize}
+
+\subsection{Συνάρτηση \texttt{calculateRisk()}}\label{fun:calculateRisk}
