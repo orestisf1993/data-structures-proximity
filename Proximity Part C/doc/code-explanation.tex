@@ -89,3 +89,36 @@ if (nextDepth < MAX_DEPTH) {
 }
 \end{lstlisting}
 \end{itemize}
+
+\subsection{Συνάρτηση \texttt{getNextMove()}}
+\begin{lstlisting}[style=declaration]
+public int[] getNextMove(final Board board, final int randomNumber)
+\end{lstlisting}
+Η συνάρτηση αυτή δέχεται ως ορίσματα ένα αντικείμενο τύπου \lstinline!Board! και
+την μεταβλητή \lstinline!randomNumber! και επιστρέφει έναν
+μονοδιάστατο πίνακα με τις συντεταγμένες \lstinline!x,y!
+που αντιστοιχούν στην θέση με την καλύτερη αξιολόγηση.
+
+Η συνάρτηση κάνει τα εξής:
+\begin{itemize}
+\item Αποθηκεύει τον πίνακα με τις επόμενες κινήσεις ώστε να χρησιμοποιηθεί από τις υπόλοιπες συναρτήσεις.
+\begin{lstlisting}[style=chunk]
+nextNumbersToBePlayed = Board.getNextTenNumbersToBePlayed();
+\end{lstlisting}
+
+\item Δημιουργεί τον root κόμβο.
+\begin{lstlisting}[style=chunk]
+final Node77968125 root = new Node77968125(board, id);
+\end{lstlisting}
+
+\item Δημιουργεί το δέντρο κάτω από τον root κόμβο.
+\begin{lstlisting}[style=chunk]
+createSubTree(root);
+\end{lstlisting}
+
+\item Καλεί τον MinMax στο δέντρο και επιστρέφει το αποτέλεσμα.
+\begin{lstlisting}[style=chunk]
+return chooseMinMaxMove(root);
+\end{lstlisting}
+\end{itemize}
+
