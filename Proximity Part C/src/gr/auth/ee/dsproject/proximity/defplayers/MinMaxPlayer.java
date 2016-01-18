@@ -14,9 +14,8 @@ import gr.auth.ee.dsproject.proximity.board.Tile;
  * @author Ioanna Gartzonika.
  */
 public class MinMaxPlayer implements AbstractPlayer {
-
     /** The max depth of our tree. */
-    final private static int MAX_DEPTH = 2;
+    final private static int MAX_DEPTH = 5;
 
     /**
      * Find empty tiles.
@@ -144,10 +143,17 @@ public class MinMaxPlayer implements AbstractPlayer {
      * @return a matrix with the coordinates of the best move.
      */
     int[] chooseMinMaxMove(final Node77968125 node) {
+        return chooseMinMaxMove(node, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+
+    int[] chooseMinMaxMove(final Node77968125 node, double a, double b) {
         final ArrayList<Node77968125> children = node.getChildren();
         if (children.isEmpty()) {
-            node.evaluate();
-            return node.getNodeMove();
+            createSubTree(node);
+            if (children.isEmpty()) {
+                node.evaluate();
+                return node.getNodeMove();
+            }
         }
 
         // if node is ours, it's child will not be.
@@ -155,13 +161,21 @@ public class MinMaxPlayer implements AbstractPlayer {
         Node77968125 bestNode = children.get(0);
         double bestValue = minimizingPlayer ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (final Node77968125 child : children) {
-            chooseMinMaxMove(child);
+            chooseMinMaxMove(child, a, b);
             final double evaluation = child.getNodeEvaluation();
             final boolean isBestValue = minimizingPlayer ? evaluation < bestValue
                     : evaluation > bestValue;
             if (isBestValue) {
                 bestNode = child;
                 bestValue = evaluation;
+            }
+            if (minimizingPlayer && evaluation > a) {
+                a = evaluation;
+            } else if (!minimizingPlayer && evaluation < b) {
+                b = evaluation;
+            }
+            if (b <= a) {
+                break;
             }
         }
         node.setNodeEvaluation(bestValue);
@@ -178,6 +192,9 @@ public class MinMaxPlayer implements AbstractPlayer {
         // Find the empty tile spots of the board of the parent.
         final Board board = parent.getNodeBoard();
         final int nextDepth = parent.getNodeDepth() + 1;
+        if (nextDepth > MAX_DEPTH) {
+            return;
+        }
         final int nodeId = nodeLevelIsOurs(nextDepth) ? id : opponentId;
         final int s = nextNumbersToBePlayed[nextDepth - 1];
         final ArrayList<Tile> emptyTiles = findEmptyTiles(board, nextDepth);
@@ -196,11 +213,6 @@ public class MinMaxPlayer implements AbstractPlayer {
 
             // Add the node as child of the parent node.
             parent.addChild(newNode);
-
-            // Add opponent's branches.
-            if (nextDepth < MAX_DEPTH) {
-                createSubTree(newNode);
-            }
         }
     }
 
