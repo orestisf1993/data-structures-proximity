@@ -216,6 +216,7 @@ boardConfig.properties
 javadoc/
 
 *SecondHeuristicPlayer.java
+*SecondPlayer.java
 *.png
 *.jpg
 
